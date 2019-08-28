@@ -20,6 +20,12 @@ def dockerRegistryCredential = "registry-ci"
 def dockerImageName = "devops/kcapture"
 
 
+def goVersion = "1.12.7 "
+
+def dockerCommand(command) {
+    sh """docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}"""
+}
+
 timestamps {
     node {
 
@@ -45,16 +51,16 @@ timestamps {
             // )
         }
 
-        stage('Build') {
-            sh 'docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:1.12.7 go vet .'
+        stage('Test') {
+            //sh 'docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:1.12.7 go vet .'
+            dockerCommand("go vet .")
         }
 
-        // stage('Test') {
+        stage('Build') {
 
-        //     // go vet
-        //     echo "go vet ."
+            dockerCommand("go build .")
 
-        // }
+        }
 
 
         // stage('Build Docker image') {
