@@ -23,7 +23,7 @@ def dockerImageName = "devops/kcapture"
 def goVersion = "1.12.7"
 
 def dockerCommand(command) {
-    sh 'echo ${command}'
+    echo "${command}"
     sh """docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}"""
 }
 
