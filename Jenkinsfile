@@ -46,25 +46,25 @@ timestamps {
         }
 
         stage('Build') {
-            sh './gradlew build -x test'
+            sh 'echo $PWD'
         }
 
-        stage('Test') {
+        // stage('Test') {
 
-            // go vet
-            echo "go vet ."
+        //     // go vet
+        //     echo "go vet ."
 
-        }
+        // }
 
 
-        stage('Build Docker image') {
-            k8sDocker.build(imageName: dockerImageName);
-            milestone label: 'Docker image built', ordinal: 100
+        // stage('Build Docker image') {
+        //     k8sDocker.build(imageName: dockerImageName);
+        //     milestone label: 'Docker image built', ordinal: 100
 
-            if (utils.isMasterBuild()) {
-                k8sDocker.push(imageName: dockerImageName, imageTag: env.VERSION)
-            }
-        }
+        //     if (utils.isMasterBuild()) {
+        //         k8sDocker.push(imageName: dockerImageName, imageTag: env.VERSION)
+        //     }
+        // }
         // Exit the node
         return
     }
