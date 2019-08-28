@@ -11,10 +11,10 @@ golang {
 
     dependencies {
         deleteAllCachedDependenciesOnClean = true
-        // build "k8s.io/apimachinery/pkg/api/errors"
-	    // build "k8s.io/apimachinery/pkg/apis/meta/v1"
-	    // build "k8s.io/client-go/kubernetes"
-	    // build "k8s.io/client-go/rest"
+        build "k8s.io/apimachinery/pkg/api/errors"
+	    build "k8s.io/apimachinery/pkg/apis/meta/v1"
+	    build "k8s.io/client-go/kubernetes"
+	    build "k8s.io/client-go/rest"
 
     }
 
