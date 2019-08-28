@@ -46,7 +46,7 @@ timestamps {
         }
 
         stage('Build') {
-            sh 'echo $PWD'
+            sh 'docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:1.12.7 go vet .'
         }
 
         // stage('Test') {
