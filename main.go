@@ -5,11 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	//"io/ioutil"
 	"github.com/gorilla/mux"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	//"github.com/kubernetes/client-go/rest"
 )
 
 //Pods struct to collect deployment pods
