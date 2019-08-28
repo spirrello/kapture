@@ -8,6 +8,8 @@ import (
 
 	//"io/ioutil"
 	"github.com/gorilla/mux"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 //Pods struct to collect deployment pods
@@ -32,6 +34,22 @@ func logMessage(level string, message string) {
 	json.Unmarshal([]byte(message), &logContent)
 
 	log.Println(logContent)
+}
+
+//k8sClient sets up the K8s api client
+func k8sClient() *kubernetes.Clientset {
+	// creates the in-cluster config
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		panic(err.Error())
+	}
+	// creates the clientset
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return clientset
 }
 
 func pods(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,22 @@
+plugins {
+    id 'com.palantir.git-version' version '0.10.1'
+    id 'org.echocat.golang' version '0.1.16'
+}
+
+group 'github.com/LiaisonTechnologies/kcapture'
+version gitVersion()
+
+golang {
+    platforms = findProperty('build.platform') ?: 'linux-amd64'
+
+    dependencies {
+        deleteAllCachedDependenciesOnClean = true
+        build 'github.com/gorilla/mux'
+	    build 'k8s.io/client-go/kubernetes'
+	    build 'k8s.io/client-go/rest'
+    }
+
+    toolchain {
+        cgoEnabled = false
+    }
+}
