@@ -11,9 +11,10 @@ golang {
 
     dependencies {
         deleteAllCachedDependenciesOnClean = true
-        build 'github.com/gorilla/mux'
-	    build 'k8s.io/client-go/kubernetes'
-	    build 'k8s.io/client-go/rest'
+        build "k8s.io/apimachinery/pkg/api/errors"
+	    build metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	    build "k8s.io/client-go/kubernetes"
+	    build "k8s.io/client-go/rest"
 
     }
 
