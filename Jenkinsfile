@@ -24,7 +24,10 @@ def goVersion = "1.12.7"
 
 def dockerCommand(command) {
     echo "${command} and ${goVersion}"
-    sh 'docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}'
+    sh """
+        docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}
+
+      """
 }
 
 timestamps {
