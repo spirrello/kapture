@@ -51,8 +51,8 @@ timestamps {
 
         stage('Test') {
 
-            // unit tests
-            echo "Unit tests not yet implemented."
+            // go vet
+            echo "go vet ."
 
         }
 
