@@ -26,7 +26,7 @@ goVersion = "1.12.7"
 def buildCommand(command) {
 
     sh """
-        docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}
+        docker run golang -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}
 
       """
 }
@@ -66,11 +66,6 @@ timestamps {
 
             buildCommand("go build .")
 
-            sh """
-
-                ls -ltr "$WORKSPACE"
-
-            """
         }
 
 
