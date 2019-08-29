@@ -23,7 +23,7 @@ def dockerImageName = "devops/kcapture"
 goVersion = "1.12.7"
 
 
-def dockerCommand(command) {
+def buildCommand(command) {
 
 
     echo "${command} and ${goVersion}"
@@ -60,12 +60,14 @@ timestamps {
 
         stage('Test') {
             //sh 'docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:1.12.7 go vet .'
-            dockerCommand("go vet .")
+            buildCommand("go vet .")
+
+            stash 'source'
         }
 
         stage('Build') {
-
-            dockerCommand("go build .")
+            unstash 'source'
+            buildCommand("go build .")
 
         }
 
