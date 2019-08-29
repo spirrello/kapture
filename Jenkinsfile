@@ -65,6 +65,12 @@ timestamps {
         stage('Build') {
 
             buildCommand("go build .")
+
+            sh """
+
+                ls -ltr "$WORKSPACE"
+
+            """
         }
 
 
