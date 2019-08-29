@@ -28,7 +28,7 @@ def dockerCommand(command) {
 
     echo "${command} and ${goVersion}"
     sh """
-        ls -ltr
+        ls -ltr "$PWD"
 
       """
       //docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} go vet .
