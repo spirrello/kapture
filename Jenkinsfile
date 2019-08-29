@@ -18,16 +18,15 @@ def kubectl = new Kubectl()
 def dockerRegistry = "registry-ci.at4d.liacloud.com"
 def dockerRegistryCredential = "registry-ci"
 def dockerImageName = "devops/kcapture"
-
-goVer = "1.12.7"
+def goVersion = "1.12.7"
 
 
 def dockerCommand(command) {
 
 
-    echo "${command} and ${goVer}"
+    echo "${command} and ${goVersion}"
     sh """
-        docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:1.12.7 ${command}
+        docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}
 
       """
 }
