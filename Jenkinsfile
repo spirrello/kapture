@@ -81,26 +81,28 @@ timestamps {
             }
         }
         // Exit the node
-        return
+        //return
     }
 
         if("master" == env.BRANCH_NAME) {
-            stage('Deploy to at4d-c1') {
+            stage('Deploy to at4d-c3') {
 
-                try {
-                  deployments.deploy(
-                          deployment: deployment,
-                          kubectl: kubectl,
-                          serviceNow: null,
-                          namespace: Namespace.DEVELOPMENT,
-                          rollingUpdate: true     // optional, defaults to true
-                  )
+            echo "Not there yet."
+                // try {
+                //   deployments.deploy(
+                //           deployment: deployment,
+                //           kubectl: kubectl,
+                //           serviceNow: null,
+                //           namespace: Namespace.DEVELOPMENT,
+                //           rollingUpdate: true     // optional, defaults to true
+                //   )
 
-                } catch (err) {
-                  currentBuild.result = "FAILURE";
-                  error "${err}"
-                }
-                  }
+                // } catch (err) {
+                //   currentBuild.result = "FAILURE";
+                //   error "${err}"
+                // }
+                //   }
 
+           }
         }
 }
