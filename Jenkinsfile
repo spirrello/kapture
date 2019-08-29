@@ -28,10 +28,9 @@ def dockerCommand(command) {
 
     echo "${command} and ${goVersion}"
     sh """
-        ls -ltr "$WORKSPACE"
+        docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}
 
       """
-      //docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} go vet .
 }
 
 timestamps {
