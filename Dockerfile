@@ -1,6 +1,6 @@
 FROM scratch
-LABEL maintainer="Stefano Pirrello <spirrello@liaison.com>"
+LABEL maintainer="Stefano Pirrello <spirrello@opentext.com>"
 
-COPY build/out/kcapture-amd64 /
-ENTRYPOINT ["/kcapture-amd64-amd64"]
+COPY kcapture /
+ENTRYPOINT ["/kcapture"]
 

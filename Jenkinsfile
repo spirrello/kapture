@@ -74,14 +74,17 @@ timestamps {
         }
 
 
-        // stage('Build Docker image') {
-        //     k8sDocker.build(imageName: dockerImageName);
-        //     milestone label: 'Docker image built', ordinal: 100
+        stage('Build Docker image') {
+            // k8sDocker.build(imageName: dockerImageName);
+            milestone label: 'Docker image built', ordinal: 100
+            image = docker.build("${dockerRegistry}/${imageName}:${env.VERSION}")
+        }
 
-        //     if (utils.isMasterBuild()) {
-        //         k8sDocker.push(imageName: dockerImageName, imageTag: env.VERSION)
-        //     }
-        // }
+        stage('Publish Docker image') {
+             withDockerRegistry(url: "https://${dockerRegistry}", credentialsId: dockerRegistryCredential) {
+                image.push()
+            }
+        }
         // Exit the node
         return
     }
