@@ -19,10 +19,12 @@ def dockerRegistry = "registry-ci.at4d.liacloud.com"
 def dockerRegistryCredential = "registry-ci"
 def dockerImageName = "devops/kcapture"
 
+goVer = "1.12.7"
 
-def goVer = "1.12.7"
 
 def dockerCommand(command) {
+
+
     echo "${command} and ${goVer}"
     sh """
         docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:1.12.7 ${command}
