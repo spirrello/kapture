@@ -57,16 +57,14 @@ timestamps {
         }
 
         stage('Test') {
-            //sh 'docker run --rm -v "$PWD":/usr/src/kcapture -w /usr/src/kcapture golang:1.12.7 go vet .'
+
             buildCommand("go vet .")
 
-            stash name: "source"
         }
 
         stage('Build') {
-            unstash name: "source"
-            buildCommand("go build .")
 
+            buildCommand("go build .")
         }
 
 
