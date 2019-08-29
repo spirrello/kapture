@@ -77,7 +77,7 @@ timestamps {
         stage('Build Docker image') {
             // k8sDocker.build(imageName: dockerImageName);
             milestone label: 'Docker image built', ordinal: 100
-            image = docker.build("${dockerRegistry}/${imageName}:${env.VERSION}")
+            image = docker.build("${dockerRegistry}/${dockerImageName}:${env.VERSION}")
         }
 
         stage('Publish Docker image') {
