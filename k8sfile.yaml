@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kcapture
+  labels:
+    app: kcapture
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kcapture
+  template:
+    metadata:
+      labels:
+        app: kcapture
+    spec:
+      containers:
+      - name: kcapture
+        image: registry-ci.at4d.liacloud.com/devops/kcapture:0.1.0
+      resources:
+      requests:
+        memory: "128i"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
