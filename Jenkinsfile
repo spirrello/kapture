@@ -23,7 +23,7 @@ goVersion = "1.12.7"
 def buildCommand(command) {
 
         sh """
-            docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture golang:${goVersion} ${command}
+            docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} ${command}
 
         """
 }
@@ -54,7 +54,7 @@ timestamps {
         stage('Build') {
             milestone(200)
 
-            buildCommand("'CGO_ENABLED=0 go build .'")
+            buildCommand("go build .")
             sh """
                 ls -ltr $WORKSPACE
 
