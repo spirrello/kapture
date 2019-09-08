@@ -51,6 +51,7 @@ timestamps {
         }
 
         stage('Build') {
+            milestone(100)
 
             buildCommand("go build .")
 
@@ -58,18 +59,18 @@ timestamps {
 
 
         stage('Build Docker image') {
-            // k8sDocker.build(imageName: dockerImageName);
-            milestone label: 'Docker image built', ordinal: 100
+            milestone(200)
+
             image = docker.build("${dockerRegistry}/${dockerImageName}:${env.VERSION}")
         }
 
         stage('Publish Docker image') {
+            milestone(300)
+
              withDockerRegistry(url: "https://${dockerRegistry}", credentialsId: dockerRegistryCredential) {
                 image.push()
             }
         }
-        // Exit the node
-        //return
     }
 
 
@@ -94,7 +95,7 @@ timestamps {
 
         //if("master" == env.BRANCH_NAME) {
             stage('validate on at4d-c3') {
-                milestone(100)
+                milestone(400)
 
                 kubectl.validate(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
 
