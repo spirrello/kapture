@@ -54,7 +54,7 @@ timestamps {
         stage('Build') {
             milestone(200)
 
-            buildCommand("go build . CGO_ENABLED=0")
+            buildCommand("CGO_ENABLED=0 go build .")
             sh """
                 ls -ltr $WORKSPACE
 
