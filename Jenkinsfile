@@ -65,19 +65,19 @@ timestamps {
         }
 
 
-        // stage('Build Docker image') {
-        //     milestone(300)
+        stage('Build Docker image') {
+            milestone(300)
 
-        //     image = docker.build("${dockerRegistry}/${dockerImageName}:${env.VERSION}")
-        // }
+            image = docker.build("${dockerRegistry}/${dockerImageName}:${env.VERSION}")
+        }
 
-        // stage('Publish Docker image') {
-        //     milestone(400)
+        stage('Publish Docker image') {
+            milestone(400)
 
-        //      withDockerRegistry(url: "https://${dockerRegistry}", credentialsId: dockerRegistryCredential) {
-        //         image.push()
-        //     }
-        // }
+             withDockerRegistry(url: "https://${dockerRegistry}", credentialsId: dockerRegistryCredential) {
+                image.push()
+            }
+        }
     }
 
 
