@@ -81,38 +81,38 @@ timestamps {
     }
 
 
-    // node( Cluster.AT4D_C3.deployAgent() ) {
-    //     unstash 'k8syaml'
+    node( Cluster.AT4D_C3.deployAgent() ) {
+        unstash 'k8syaml'
 
-    //     //Liaison at4d-c3 Dev/QA
-    //         deploymentAt4dC3 = deployments.create(
-    //             name: "${k8sDeployName}",
-    //             version: "${dockerImageVer}",
-    //             description: "${k8sDeployName}",
-    //             dockerImageName: "${dockerImageName}",   // Without registry!
-    //             dockerImageTag: "${dockerImageVer}",
-    //             yamlFile: 'k8sfile.yaml',   // optional, defaults to 'K8sfile.yaml'
-    //             gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
-    //             gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
-    //             gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
-    //             kubectl: kubectl,
-    //             namespace: Namespace.KUBE_SYSTEM,
-    //             clusters: [ Cluster.AT4D_C3 ]
-    // )
+        //Liaison at4d-c3 Dev/QA
+            deploymentAt4dC3 = deployments.create(
+                name: "${k8sDeployName}",
+                version: "${dockerImageVer}",
+                description: "${k8sDeployName}",
+                dockerImageName: "${dockerImageName}",   // Without registry!
+                dockerImageTag: "${dockerImageVer}",
+                yamlFile: 'k8sfile.yaml',   // optional, defaults to 'K8sfile.yaml'
+                gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
+                gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
+                gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
+                kubectl: kubectl,
+                namespace: Namespace.KUBE_SYSTEM,
+                clusters: [ Cluster.AT4D_C3 ]
+    )
 
-    //     //if("master" == env.BRANCH_NAME) {
-    //         stage('validate on at4d-c3') {
-    //             milestone(500)
+        //if("master" == env.BRANCH_NAME) {
+            stage('validate on at4d-c3') {
+                milestone(500)
 
-    //             kubectl.validate(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
-    //         }
+                kubectl.validate(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+            }
 
-    //          stage('deploy to at4d-c3') {
-    //             milestone(600)
+             stage('deploy to at4d-c3') {
+                milestone(600)
 
-    //             kubectl.deploy(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
-    //             kubectl.rolloutStatus(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
-    //         }
-    //     //}
-    // }
+                kubectl.deploy(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+                kubectl.rolloutStatus(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+            }
+        //}
+    }
 }
