@@ -57,7 +57,7 @@ func main() {
 		//_, err = clientset.CoreV1().Pods("default").Get("example-xxxxx", metav1.GetOptions{})
 		pods, err = clientset.CoreV1().Pods("kube-system").List(metav1.ListOptions{LabelSelector: "app=nfs-client-provisioner"})
 		for _, pod := range pods.Items {
-			fmt.Println(pod.Name, pod.Status)
+			fmt.Println(pod.Name)
 		}
 		//NEED TO FIX THIS VAR.
 		// var labelOptions = kubernetes.CoreV1().Pods.GetOptions
