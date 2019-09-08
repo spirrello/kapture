@@ -38,7 +38,7 @@ timestamps {
             env.GIT_URL = utils.runSh("git config remote.origin.url | sed -e 's/\\(.git\\)*\$//g' ")
             env.REPO_NAME = utils.runSh("basename -s .git ${env.GIT_URL}")
             env.RELEASE_NOTES = utils.runSh("awk '/## \\[${env.VERSION}\\]/{flag=1;next}/## \\[/{flag=0}flag' CHANGELOG.md")
-            currentBuild.displayName  = env.VERSION
+            currentBuild.displayName  = "${env.VERSION}-${env.BUILD_NUMBER}"
             dockerImageVer = env.VERSION
 
             stash includes: 'k8sfile.yaml', name: 'k8syaml'
