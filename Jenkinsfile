@@ -98,8 +98,13 @@ timestamps {
                 milestone(400)
 
                 kubectl.validate(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+            }
 
+             stage('deploy to at4d-c3') {
+                milestone(500)
 
+                kubectl.deploy(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+                kubectl.rolloutStatus(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
             }
         //}
     }
