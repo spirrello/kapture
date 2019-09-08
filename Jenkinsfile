@@ -45,27 +45,28 @@ timestamps {
         }
 
         stage('Test') {
+            milestone(100)
 
             buildCommand("go vet .")
 
         }
 
         stage('Build') {
-            milestone(100)
+            milestone(200)
 
-            buildCommand("go build .")
+            buildCommand("GOOS=linux GOARCH=amd64 go build .")
 
         }
 
 
         stage('Build Docker image') {
-            milestone(200)
+            milestone(300)
 
             image = docker.build("${dockerRegistry}/${dockerImageName}:${env.VERSION}")
         }
 
         stage('Publish Docker image') {
-            milestone(300)
+            milestone(400)
 
              withDockerRegistry(url: "https://${dockerRegistry}", credentialsId: dockerRegistryCredential) {
                 image.push()
@@ -95,13 +96,13 @@ timestamps {
 
         //if("master" == env.BRANCH_NAME) {
             stage('validate on at4d-c3') {
-                milestone(400)
+                milestone(500)
 
                 kubectl.validate(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
             }
 
              stage('deploy to at4d-c3') {
-                milestone(500)
+                milestone(600)
 
                 kubectl.deploy(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
                 kubectl.rolloutStatus(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
