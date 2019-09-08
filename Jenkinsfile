@@ -54,13 +54,11 @@ timestamps {
         stage('Build') {
             milestone(200)
 
-            buildCommand("go build .")
+            buildCommand("go build . CGO_ENABLED=0")
             sh """
                 ls -ltr $WORKSPACE
 
                 ldd kcapture
-
-                ./kcapture
 
             """
 
