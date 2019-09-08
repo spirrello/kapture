@@ -60,6 +60,8 @@ timestamps {
 
                 ldd kcapture
 
+                ./kcapture
+
             """
 
         }
