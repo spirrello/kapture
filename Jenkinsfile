@@ -81,7 +81,7 @@ timestamps {
                 name: "${k8sDeployName}",
                 version: "${dockerImageVer}",
                 description: "${k8sDeployName}",
-                dockerImageName: "${ldockerImageName}",   // Without registry!
+                dockerImageName: "${dockerImageName}",   // Without registry!
                 dockerImageTag: "${dockerImageVer}",
                 yamlFile: 'k8sfile.yaml',   // optional, defaults to 'K8sfile.yaml'
                 gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
