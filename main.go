@@ -55,7 +55,7 @@ func main() {
 		// - Use helper functions like e.g. errors.IsNotFound()
 		// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
 		//_, err = clientset.CoreV1().Pods("default").Get("example-xxxxx", metav1.GetOptions{})
-		pods, err = clientset.CoreV1().Pods("kube-system").List(metav1.ListOptions{FieldSelector: "metadata.labels=nfs-client-provisioner"})
+		pods, err = clientset.CoreV1().Pods("kube-system").List(metav1.ListOptions{LabelSelector: "app=nfs-client-provisioner"})
 		for _, pod := range pods.Items {
 			fmt.Println(pod.Name, pod.Status)
 		}
