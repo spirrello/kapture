@@ -54,7 +54,8 @@ func main() {
 		// Examples for error handling:
 		// - Use helper functions like e.g. errors.IsNotFound()
 		// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
-		_, err = clientset.CoreV1().Pods("default").Get("example-xxxxx", metav1.GetOptions{})
+		//_, err = clientset.CoreV1().Pods("default").Get("example-xxxxx", metav1.GetOptions{})
+		_, err = clientset.CoreV1().Pods("kube-system").Get("", "app=nfs-client-provisioner")
 		if errors.IsNotFound(err) {
 			fmt.Printf("Pod not found\n")
 		} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
