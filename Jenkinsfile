@@ -58,8 +58,6 @@ timestamps {
             sh """
                 ls -ltr $WORKSPACE
 
-                file kcapture
-
             """
 
         }
