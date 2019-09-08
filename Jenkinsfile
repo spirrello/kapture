@@ -3,13 +3,11 @@
 
 @Library('visibilityLibs')
 import com.liaison.jenkins.visibility.Utilities;
-// import com.liaison.jenkins.common.testreport.TestResultsUploader
-// import com.liaison.jenkins.common.sonarqube.QualityGate
 import com.liaison.jenkins.common.kubernetes.*
-// import com.liaison.jenkins.common.e2etest.*
-// import com.liaison.jenkins.common.servicenow.ServiceNow
-// import com.liaison.jenkins.common.slack.*
-// import com.liaison.jenkins.common.releasenote.ReleaseNote
+
+def utils = new Utilities();
+def deployments = new Deployments()
+def kubectl = new Kubectl()
 
 def deployments = new Deployments()
 def k8sDocker = new Docker()
@@ -18,6 +16,8 @@ def kubectl = new Kubectl()
 def dockerRegistry = "registry-ci.at4d.liacloud.com"
 def dockerRegistryCredential = "registry-ci"
 def dockerImageName = "devops/kcapture"
+def k8sDeployName = "kcapture"
+
 
 //Golang version
 goVersion = "1.12.7"
@@ -42,18 +42,9 @@ timestamps {
             env.REPO_NAME = utils.runSh("basename -s .git ${env.GIT_URL}")
             env.RELEASE_NOTES = utils.runSh("awk '/## \\[${env.VERSION}\\]/{flag=1;next}/## \\[/{flag=0}flag' CHANGELOG.md")
             currentBuild.displayName  = env.VERSION
+            dockerImageVer = env.VERSION
 
-            // deployment = deployments.create(
-            //     name: 'File Upload',
-            //     version: env.VERSION,
-            //     description: 'File Upload',
-            //     dockerImageName: dockerImageName,
-            //     dockerImageTag: env.VERSION,
-            //     yamlFile: 'K8sfile.yaml',   // optional, defaults to 'K8sfile.yaml'
-            //     gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
-            //     gitCommit: env.GIT_COMMIT,   // optional, defaults to env.GIT_COMMIT
-            //     kubectl: kubectl
-            // )
+            stash includes: 'k8sfile.yaml', name: 'k8syaml'
         }
 
         stage('Test') {
@@ -84,25 +75,34 @@ timestamps {
         //return
     }
 
-        if("master" == env.BRANCH_NAME) {
-            stage('Deploy to at4d-c3') {
 
-            echo "Not there yet."
-                // try {
-                //   deployments.deploy(
-                //           deployment: deployment,
-                //           kubectl: kubectl,
-                //           serviceNow: null,
-                //           namespace: Namespace.DEVELOPMENT,
-                //           rollingUpdate: true     // optional, defaults to true
-                //   )
+    node( Cluster.AT4D_C3.deployAgent() ) {
+        unstash 'k8syaml'
 
-                // } catch (err) {
-                //   currentBuild.result = "FAILURE";
-                //   error "${err}"
-                // }
-                //   }
+        //Liaison at4d-c3 Dev/QA
+            deploymentAt4dC3 = deployments.create(
+                name: "${k8sDeployName}",
+                version: "${dockerImageVer}",
+                description: "${k8sDeployName}",
+                dockerImageName: "${ldockerImageName}",   // Without registry!
+                dockerImageTag: "${dockerImageVer}",
+                yamlFile: 'k8sfile.yaml',   // optional, defaults to 'K8sfile.yaml'
+                gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
+                gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
+                gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
+                kubectl: kubectl,
+                namespace: Namespace.KUBE_SYSTEM,
+                clusters: [ Cluster.AT4D_C3 ]
+    )
 
-           }
-        }
+        //if("master" == env.BRANCH_NAME) {
+            stage('validate on at4d-c3') {
+                milestone(100)
+
+                kubectl.validate(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+
+
+            }
+        //}
+    }
 }
