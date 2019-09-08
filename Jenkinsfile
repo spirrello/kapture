@@ -5,9 +5,6 @@
 import com.liaison.jenkins.visibility.Utilities;
 import com.liaison.jenkins.common.kubernetes.*
 
-def utils = new Utilities();
-def deployments = new Deployments()
-def kubectl = new Kubectl()
 
 def deployments = new Deployments()
 def k8sDocker = new Docker()
