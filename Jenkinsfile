@@ -58,7 +58,7 @@ timestamps {
             sh """
                 ls -ltr $WORKSPACE
 
-                ldd kcapture
+                ldd kcapture | grep 'not a dynamic executable'"
 
             """
 
