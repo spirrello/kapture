@@ -81,6 +81,7 @@ func main() {
 
 	flag.Parse()
 
+	//if a kubeconfig is not provided we'll assume it's an in cluster deployment
 	if *kubeconfig != "" {
 		clientset, err := externalKubeClient(*kubeconfig)
 		if err != nil {
