@@ -1,13 +1,22 @@
+/*
+Copyright 2016 The Kubernetes Authors.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+// Note: the example only works with the code within the same release/branch.
 package main
 
 import (
-	"encoding/json"
+	"flag"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-
-	"github.com/gorilla/mux"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,36 +24,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
-
-//Pods struct to collect deployment pods
-type Pods struct {
-	Deployment string `json:"deployment"`
-	Namespace  string `json:"namespace"`
-}
-
-//Deployment struct for the request
-type Deployment struct {
-	Label     string `json:"label"`
-	Namespace string `json:"namespace"`
-}
-
-//LogFormat struct for return log messages in json format
-type LogFormat struct {
-	Loglevel string `json:"level"`
-	Message  string `json:"message"`
-}
-
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode("200 OK")
-}
-
-func logMessage(level string, message string) {
-	var logContent LogFormat
-
-	json.Unmarshal([]byte(message), &logContent)
-
-	log.Println(logContent)
-}
 
 //externalKubeClient creates the external cluster config
 func externalKubeClient(kubeconfig string) (*kubernetes.Clientset, error) {
@@ -94,23 +73,27 @@ func fetchPods(clientset *kubernetes.Clientset) {
 
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	var deployment Deployment
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		json.NewEncoder(w).Encode("error reading body")
-	}
-
-	json.Unmarshal(reqBody, &deployment)
-
-	json.NewEncoder(w).Encode(deployment)
-
-}
-
 func main() {
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/v1/healthcheck", healthCheck)
-	router.HandleFunc("/v1/handler", handler).Methods("POST")
-	log.Fatal(http.ListenAndServe(":9090", router))
+	//flag for external client
+	var kubeconfig *string
+	kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+
+	flag.Parse()
+
+	//if a kubeconfig is not provided we'll assume it's an in cluster deployment
+	if *kubeconfig != "" {
+		clientset, err := externalKubeClient(*kubeconfig)
+		if err != nil {
+			panic(err.Error())
+		}
+		fetchPod(clientset)
+	} else {
+		clientset, err := internalKubeClient()
+		if err != nil {
+			panic(err.Error())
+		}
+		fetchPod(clientset)
+	}
+
 }
