@@ -77,9 +77,13 @@ func internalKubeClient() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-func fetchPods(clientset *kubernetes.Clientset) {
+//func fetchPods(clientset *kubernetes.Clientset) {
+func fetchPods(label string, namespace string) {
 
-	pods, err := clientset.CoreV1().Pods("kube-system").List(metav1.ListOptions{LabelSelector: "app=nfs-client-provisioner"})
+	//testing with external client
+	clientset, _ := externalKubeClient("config")
+
+	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	for _, pod := range pods.Items {
 		fmt.Println(pod.Name, pod.Spec.NodeName)
 	}
@@ -94,7 +98,7 @@ func fetchPods(clientset *kubernetes.Clientset) {
 
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func deployment(w http.ResponseWriter, r *http.Request) {
 	var deployment Deployment
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -103,7 +107,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(reqBody, &deployment)
 
-	json.NewEncoder(w).Encode(deployment)
+	json.NewEncoder(w).Encode(deployment.Label)
+
+	fetchPods(deployment.Label, deployment.Namespace)
 
 }
 
@@ -111,6 +117,6 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/v1/healthcheck", healthCheck)
-	router.HandleFunc("/v1/handler", handler).Methods("POST")
+	router.HandleFunc("/v1/deployment", deployment).Methods("POST")
 	log.Fatal(http.ListenAndServe(":9090", router))
 }
