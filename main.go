@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 
@@ -77,11 +78,30 @@ func internalKubeClient() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-//func fetchPods(clientset *kubernetes.Clientset) {
+func setupKubeClient() (*kubernetes.Clientset, error) {
+	if os.Getenv("KUBECONFIG") != "" {
+		clientset, err := externalKubeClient(os.Getenv("KUBECONFIG"))
+		if err != nil {
+			return nil, err
+		}
+		return clientset, nil
+	}
+
+	clientset, err := internalKubeClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return clientset, nil
+}
+
 func fetchPods(label string, namespace string) {
 
-	//testing with external client
-	clientset, _ := externalKubeClient("config")
+	//setup connection to kube API
+	clientset, err := setupKubeClient()
+	if err != nil {
+		panic(err.Error())
+	}
 
 	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	for _, pod := range pods.Items {
