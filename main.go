@@ -23,11 +23,6 @@ type podStruct struct {
 	IP   string `json:"ip"`
 }
 
-// //PodSlice is slice of Pod structs
-// type podSlice struct {
-// 	Pods []pod
-// }
-
 //deployment struct for the request
 type deployment struct {
 	Label     string `json:"label"`
@@ -113,7 +108,6 @@ func fetchPods(label string, namespace string) []podStruct {
 	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	for _, pod := range pods.Items {
 		podSlice = append(podSlice, podStruct{pod.Name, pod.Spec.NodeName, pod.Status.PodIP})
-		//fmt.Println(pod.Name, pod.Spec.NodeName, pod.Status.PodIP)
 	}
 
 	if errors.IsNotFound(err) {
