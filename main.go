@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,14 +16,20 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-//Pods struct to collect deployment pods
-type Pods struct {
-	Deployment string `json:"deployment"`
-	Namespace  string `json:"namespace"`
+//Pod struct to collect pod data
+type podStruct struct {
+	Name string `json:"name"`
+	Node string `json:"node"`
+	IP   string `json:"ip"`
 }
 
-//Deployment struct for the request
-type Deployment struct {
+// //PodSlice is slice of Pod structs
+// type podSlice struct {
+// 	Pods []pod
+// }
+
+//deployment struct for the request
+type deployment struct {
 	Label     string `json:"label"`
 	Namespace string `json:"namespace"`
 }
@@ -95,7 +100,7 @@ func setupKubeClient() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-func fetchPods(label string, namespace string) {
+func fetchPods(label string, namespace string) []podStruct {
 
 	//setup connection to kube API
 	clientset, err := setupKubeClient()
@@ -103,33 +108,37 @@ func fetchPods(label string, namespace string) {
 		panic(err.Error())
 	}
 
+	//Setup podSlice
+	podSlice := []podStruct{}
 	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	for _, pod := range pods.Items {
-		fmt.Println(pod.Name, pod.Spec.NodeName)
+		podSlice = append(podSlice, podStruct{pod.Name, pod.Spec.NodeName, pod.Status.PodIP})
+		//fmt.Println(pod.Name, pod.Spec.NodeName, pod.Status.PodIP)
 	}
 
 	if errors.IsNotFound(err) {
-		fmt.Printf("Pod not found\n")
+		log.Fatal("Pod not found\n")
 	} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
-		fmt.Printf("Error getting pod %v\n", statusError.ErrStatus.Message)
+		log.Fatal("Error getting pod %v\n", statusError.ErrStatus.Message)
 	} else if err != nil {
 		panic(err.Error())
 	}
 
+	log.Println(podSlice)
+	return podSlice
+
 }
 
-func deployment(w http.ResponseWriter, r *http.Request) {
-	var deployment Deployment
+func pods(w http.ResponseWriter, r *http.Request) {
+	var deploy deployment
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		json.NewEncoder(w).Encode("error reading body")
 	}
 
-	json.Unmarshal(reqBody, &deployment)
+	json.Unmarshal(reqBody, &deploy)
 
-	json.NewEncoder(w).Encode(deployment.Label)
-
-	fetchPods(deployment.Label, deployment.Namespace)
+	json.NewEncoder(w).Encode(fetchPods(deploy.Label, deploy.Namespace))
 
 }
 
@@ -137,6 +146,6 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/v1/healthcheck", healthCheck)
-	router.HandleFunc("/v1/deployment", deployment).Methods("POST")
+	router.HandleFunc("/v1/pods", pods).Methods("POST")
 	log.Fatal(http.ListenAndServe(":9090", router))
 }
