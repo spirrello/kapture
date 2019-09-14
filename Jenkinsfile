@@ -99,7 +99,7 @@ timestamps {
                 clusters: [ Cluster.AT4D_C3 ]
     )
 
-        //if("master" == env.BRANCH_NAME) {
+        if("master" == env.BRANCH_NAME) {
             stage('validate on at4d-c3') {
                 milestone(500)
 
@@ -112,6 +112,6 @@ timestamps {
                 kubectl.deploy(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
                 kubectl.rolloutStatus(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
             }
-        //}
+        }
     }
 }
