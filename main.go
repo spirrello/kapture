@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/liaisontechnologies/kcapture/models"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -17,12 +18,12 @@ import (
 )
 
 //podStruct to collect pod data
-type podStruct struct {
-	//Deployment string `json:"deployment"`
-	Name string `json:"name"`
-	Node string `json:"node"`
-	IP   string `json:"ip"`
-}
+// type podStruct struct {
+// 	//Deployment string `json:"deployment"`
+// 	Name string `json:"name"`
+// 	Node string `json:"node"`
+// 	IP   string `json:"ip"`
+// }
 
 //deployment struct for the request
 type deployment struct {
@@ -96,7 +97,7 @@ func setupKubeClient() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-func fetchPods(label string, namespace string) []podStruct {
+func fetchPods(label string, namespace string) []models.PodInfo {
 
 	//setup connection to kube API
 	clientset, err := setupKubeClient()
@@ -105,10 +106,10 @@ func fetchPods(label string, namespace string) []podStruct {
 	}
 
 	//Setup podSlice
-	podSlice := []podStruct{}
+	podSlice := []models.PodInfo{}
 	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	for _, pod := range pods.Items {
-		podSlice = append(podSlice, podStruct{pod.Name, pod.Spec.NodeName, pod.Status.PodIP})
+		podSlice = append(podSlice, models.PodInfo{Name: pod.Name, Node: pod.Spec.NodeName, IP: pod.Status.PodIP})
 	}
 
 	if errors.IsNotFound(err) {
