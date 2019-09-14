@@ -18,6 +18,7 @@ import (
 
 //podStruct to collect pod data
 type podStruct struct {
+	//Deployment string `json:"deployment"`
 	Name string `json:"name"`
 	Node string `json:"node"`
 	IP   string `json:"ip"`
@@ -122,6 +123,11 @@ func fetchPods(label string, namespace string) []podStruct {
 	return podSlice
 
 }
+
+/*
+pods receives the request and calls fetchPods to
+retrieve pod details
+*/
 func pods(w http.ResponseWriter, r *http.Request) {
 	var deploy deployment
 	reqBody, err := ioutil.ReadAll(r.Body)
