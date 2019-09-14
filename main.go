@@ -16,7 +16,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-//Pod struct to collect pod data
+//podStruct to collect pod data
 type podStruct struct {
 	Name string `json:"name"`
 	Node string `json:"node"`
@@ -113,7 +113,7 @@ func fetchPods(label string, namespace string) []podStruct {
 	if errors.IsNotFound(err) {
 		log.Fatal("Pod not found\n")
 	} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
-		log.Fatal("Error getting pod %v\n", statusError.ErrStatus.Message)
+		log.Fatalf("Error getting pod %v\n", statusError.ErrStatus.Message)
 	} else if err != nil {
 		panic(err.Error())
 	}
@@ -122,7 +122,6 @@ func fetchPods(label string, namespace string) []podStruct {
 	return podSlice
 
 }
-
 func pods(w http.ResponseWriter, r *http.Request) {
 	var deploy deployment
 	reqBody, err := ioutil.ReadAll(r.Body)

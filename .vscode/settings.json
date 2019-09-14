@@ -1,5 +1,13 @@
 {
     "go.autocompleteUnimportedPackages": true,
     "go.buildOnSave": "off",
-    "go.inferGopath": false
+    "go.inferGopath": true,
+	"go.docsTool": "gogetdoc",
+    "go.lintTool": "golint",
+    "go.vetOnSave": "workspace",
+    "files.trimTrailingWhitespace": true,
+    "go.formatTool": "gofmt",
+    "[go]": {
+        "editor.formatOnSave": true
+    },
 }
