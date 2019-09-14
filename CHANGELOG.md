@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - struct for all pod info
 - moved pod struct to package
+- using ENV for go-client connection
 
 ## [0.1.4] - 2019-09-08
 
