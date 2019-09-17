@@ -122,17 +122,19 @@ func fetchPods(label string, namespace string) []models.PodInfo {
 		//LETS fetch the capture pod per node
 		//k8-app = filebeat
 		//os.Getenv("KCAPTURE_CAPTURE")
-		capturePod, err := clientset.CoreV1().Pods("kube-system").List(metav1.ListOptions{
+		//The following should be converted to ENV variables
+		capturePods, err := clientset.CoreV1().Pods("kube-system").List(metav1.ListOptions{
 			LabelSelector: "k8s-app=filebeat", FieldSelector: "spec.nodeName=" + pod.Spec.NodeName,
 		})
 		if err != nil {
 			panic(err.Error())
 		}
-		log.Println(capturePod.Items)
 
-		// podInfo := models.PodInfo{Name: pod.Name, Node: pod.Spec.NodeName, IP: pod.Status.PodIP}
-		// podCollection.NodeName
-		// podCollection.NodeName.Pods = append(podCollection.NodeName.Pods, podInfo)
+		//loop through capture pod info
+		for _, cPods := range capturePods.Items {
+			log.Println(cPods.Name)
+		}
+
 	}
 
 	log.Println(podSlice)
