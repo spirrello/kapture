@@ -107,11 +107,8 @@ func fetchPods(label string, namespace string) []models.PodInfo {
 
 	//Setup podSlice
 	podSlice := []models.PodInfo{}
-	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
-	for _, pod := range pods.Items {
-		podSlice = append(podSlice, models.PodInfo{Name: pod.Name, Node: pod.Spec.NodeName, IP: pod.Status.PodIP})
-	}
 
+	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	if errors.IsNotFound(err) {
 		log.Fatal("Pod not found\n")
 	} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
@@ -119,18 +116,58 @@ func fetchPods(label string, namespace string) []models.PodInfo {
 	} else if err != nil {
 		panic(err.Error())
 	}
+	// capturePods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: "k8s-app=filebeat"})
+	for _, pod := range pods.Items {
+		podSlice = append(podSlice, models.PodInfo{Name: pod.Name, Node: pod.Spec.NodeName, IP: pod.Status.PodIP})
+		//LETS fetch the capture pod per node
+		//k8-app = filebeat
+		//os.Getenv("KCAPTURE_CAPTURE")
+		capturePod, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{
+			LabelSelector: "k8s-app=filebeat", FieldSelector: "spec.nodeName=" + pod.Spec.NodeName,
+		})
+		if err != nil {
+			panic(err.Error())
+		}
+		log.Println(capturePod.Items)
+
+		// podInfo := models.PodInfo{Name: pod.Name, Node: pod.Spec.NodeName, IP: pod.Status.PodIP}
+		// podCollection.NodeName
+		// podCollection.NodeName.Pods = append(podCollection.NodeName.Pods, podInfo)
+	}
 
 	log.Println(podSlice)
 	return podSlice
 
 }
 
+// func fetchNodes(podCollection models.PodCollection) {
+
+// 	//setup connection to kube API
+// 	clientset, err := setupKubeClient()
+// 	if err != nil {
+// 		panic(err.Error())
+// 	}
+
+// 	//var podInfo models.PodInfo
+
+// 	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+
+// 	for _, node := range nodes.Items {
+// 		log.Println(node.Name)
+// 		podCollection = append(podCollection, NodeName: node.Name,)
+// 	}
+// }
+
 /*
 pods receives the request and calls fetchPods to
 retrieve pod details
 */
 func pods(w http.ResponseWriter, r *http.Request) {
+	//initialize deploy and podCollection structs first
 	var deploy deployment
+	// var podCollection models.PodCollection
+	// fetchNodes(*podCollection)
+
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		json.NewEncoder(w).Encode("error reading body")
