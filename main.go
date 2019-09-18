@@ -17,20 +17,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-//podStruct to collect pod data
-// type podStruct struct {
-// 	//Deployment string `json:"deployment"`
-// 	Name string `json:"name"`
-// 	Node string `json:"node"`
-// 	IP   string `json:"ip"`
-// }
-
-//deployment struct for the request
-type deployment struct {
-	Label     string `json:"label"`
-	Namespace string `json:"namespace"`
-}
-
 //LogFormat struct for return log messages in json format
 type LogFormat struct {
 	Loglevel string `json:"level"`
@@ -41,7 +27,7 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("200 OK")
 }
 
-func logMessage(level string, message string) {
+func logMessage(level, message string) {
 	var logContent LogFormat
 
 	json.Unmarshal([]byte(message), &logContent)
@@ -97,7 +83,11 @@ func setupKubeClient() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-func fetchPods(label string, namespace string) []models.PodInfo {
+/*
+fetchPods queries kubeapi to find the requested pods and returns a map of
+them with the capture pods.
+*/
+func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 
 	//setup connection to kube API
 	clientset, err := setupKubeClient()
@@ -105,9 +95,7 @@ func fetchPods(label string, namespace string) []models.PodInfo {
 		panic(err.Error())
 	}
 
-	//Setup podSlice
-	podSlice := []models.PodInfo{}
-
+	//fetch pods
 	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	if errors.IsNotFound(err) {
 		log.Fatal("Pod not found\n")
@@ -116,49 +104,24 @@ func fetchPods(label string, namespace string) []models.PodInfo {
 	} else if err != nil {
 		panic(err.Error())
 	}
-	// capturePods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: "k8s-app=filebeat"})
+
+	//This map uses the capture pods as the keys
+	podMap := make(map[string][]models.PodInfo)
 	for _, pod := range pods.Items {
-		podSlice = append(podSlice, models.PodInfo{Name: pod.Name, Node: pod.Spec.NodeName, IP: pod.Status.PodIP})
-		//LETS fetch the capture pod per node
-		//k8-app = filebeat
-		//os.Getenv("KCAPTURE_CAPTURE")
-		//The following should be converted to ENV variables
-		capturePods, err := clientset.CoreV1().Pods("kube-system").List(metav1.ListOptions{
-			LabelSelector: "k8s-app=filebeat", FieldSelector: "spec.nodeName=" + pod.Spec.NodeName,
+		//LETS fetch the capture pod that exist on the same node as the requested pod.
+		capturePods, err := clientset.CoreV1().Pods(os.Getenv("CAPTURE_PODS_NAMESPACE")).List(metav1.ListOptions{
+			LabelSelector: os.Getenv("CAPTURE_PODS"), FieldSelector: "spec.nodeName=" + pod.Spec.NodeName,
 		})
 		if err != nil {
 			panic(err.Error())
-		}
+		} else {
+			log.Println(label + " deployment found")
 
-		//loop through capture pod info
-		for _, cPods := range capturePods.Items {
-			log.Println(cPods.Name)
 		}
-
+		podMap[capturePods.Items[0].Name] = append(podMap[capturePods.Items[0].Name], models.PodInfo{Name: pod.Name, IP: pod.Status.PodIP})
 	}
-
-	log.Println(podSlice)
-	return podSlice
-
+	return podMap
 }
-
-// func fetchNodes(podCollection models.PodCollection) {
-
-// 	//setup connection to kube API
-// 	clientset, err := setupKubeClient()
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
-
-// 	//var podInfo models.PodInfo
-
-// 	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
-
-// 	for _, node := range nodes.Items {
-// 		log.Println(node.Name)
-// 		podCollection = append(podCollection, NodeName: node.Name,)
-// 	}
-// }
 
 /*
 pods receives the request and calls fetchPods to
@@ -166,9 +129,7 @@ retrieve pod details
 */
 func pods(w http.ResponseWriter, r *http.Request) {
 	//initialize deploy and podCollection structs first
-	var deploy deployment
-	// var podCollection models.PodCollection
-	// fetchNodes(*podCollection)
+	var deploy models.Deployment
 
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -176,7 +137,6 @@ func pods(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.Unmarshal(reqBody, &deploy)
-
 	json.NewEncoder(w).Encode(fetchPods(deploy.Label, deploy.Namespace))
 
 }

@@ -1,5 +1,11 @@
 package models
 
+//Deployment struct for the request
+type Deployment struct {
+	Label     string `json:"label"`
+	Namespace string `json:"namespace"`
+}
+
 //PodInfo to collect pod data
 type PodInfo struct {
 	//Deployment string `json:"deployment"`
