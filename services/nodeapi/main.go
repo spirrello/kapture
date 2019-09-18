@@ -1,4 +1,4 @@
-package nodeapi
+package main
 
 import (
 	"encoding/json"
