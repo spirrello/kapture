@@ -1,6 +1,12 @@
 package models
 
-//Deployment struct for the request
+//LogFormat struct for return log messages in json format
+type LogFormat struct {
+	Loglevel string `json:"level"`
+	Message  string `json:"message"`
+}
+
+//Deployment struct for the initial request
 type Deployment struct {
 	Label     string `json:"label"`
 	Namespace string `json:"namespace"`

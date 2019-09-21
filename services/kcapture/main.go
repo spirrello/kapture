@@ -17,20 +17,15 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-//LogFormat struct for return log messages in json format
-type LogFormat struct {
-	Loglevel string `json:"level"`
-	Message  string `json:"message"`
-}
-
+//healthCheck to run check.
 func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(LogFormat{"info", "200 OK"})
+	json.NewEncoder(w).Encode(models.LogFormat{Loglevel: "info", Message: "200 OK"})
 }
 
 //logMessage prints in JSON format
 func logMessage(logLevel, message string) {
 
-	logStruct := LogFormat{Loglevel: logLevel, Message: message}
+	logStruct := models.LogFormat{Loglevel: logLevel, Message: message}
 	logStr, _ := json.Marshal(logStruct)
 	log.Println(string(logStr))
 
