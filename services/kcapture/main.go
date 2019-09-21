@@ -24,15 +24,16 @@ type LogFormat struct {
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode("200 OK")
+	json.NewEncoder(w).Encode(LogFormat{"info", "200 OK"})
 }
 
-func logMessage(level, message string) {
-	var logContent LogFormat
+//logMessage prints in JSON format
+func logMessage(logLevel, message string) {
 
-	json.Unmarshal([]byte(message), &logContent)
+	logStruct := LogFormat{Loglevel: logLevel, Message: message}
+	logStr, _ := json.Marshal(logStruct)
+	log.Println(string(logStr))
 
-	log.Println(logContent)
 }
 
 //externalKubeClient creates the external cluster config
@@ -97,8 +98,12 @@ func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 
 	//fetch pods
 	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
+	if len(pods.Items) == 0 {
+		logMessage("ERROR", label+" not found")
+	}
 	if errors.IsNotFound(err) {
 		log.Fatal("Pod not found\n")
+		//logMessage("ERROR", "Pod not found")
 	} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
 		log.Fatalf("Error getting pod %v\n", statusError.ErrStatus.Message)
 	} else if err != nil {

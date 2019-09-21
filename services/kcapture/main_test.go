@@ -28,9 +28,9 @@ func TestHealthCheck(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	//COMMENTING OUT FOR NOW AS THIS IS FAILING
+	// COMMENTING OUT FOR NOW AS THIS IS FAILING
 	// Check the response body is what we expect.
-	// expected := "\"200 OK\""
+	// expected := `{"level":"info","message":"200 OK"}`
 	// if rr.Body.String() != expected {
 	// 	t.Errorf("handler returned unexpected body: got %v want %v",
 	// 		rr.Body.String(), expected)
