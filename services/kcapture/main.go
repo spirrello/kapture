@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -123,6 +124,19 @@ func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 	return podMap
 }
 
+//nodeInstruct posts to the nodeAPI with instructions
+func nodeInstruct(podMap map[string][]models.PodInfo) {
+	bytesRepresentation, err := json.Marshal(podMap)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	nodeAPI := os.Getenv("NODE_API")
+	_, err = http.Post(nodeAPI, "application/json", bytes.NewBuffer(bytesRepresentation))
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
 /*
 pods receives the request and calls fetchPods to
 retrieve pod details
@@ -137,8 +151,11 @@ func pods(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.Unmarshal(reqBody, &deploy)
+
+	podMap := fetchPods(deploy.Label, deploy.Namespace)
 	json.NewEncoder(w).Encode(fetchPods(deploy.Label, deploy.Namespace))
 
+	nodeInstruct(podMap)
 }
 
 func main() {

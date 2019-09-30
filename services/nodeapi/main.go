@@ -10,23 +10,26 @@ import (
 	"github.com/liaisontechnologies/kcapture/models"
 )
 
+//healthCheck to run check.
 func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode("200 OK")
+	json.NewEncoder(w).Encode(models.LogFormat{Loglevel: "info", Message: "200 OK"})
 }
 
 /*
 nodeAPI receives the request and starts processing
 */
 func nodeAPI(w http.ResponseWriter, r *http.Request) {
-	var pods models.PodInfo
+	//var pods []models.PodInfo
+	podMap := make(map[string][]models.PodInfo)
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		json.NewEncoder(w).Encode("error reading body")
 	}
 
-	json.Unmarshal(reqBody, &pods)
+	json.Unmarshal(reqBody, &podMap)
+	json.NewEncoder(w).Encode(podMap)
 
-	//json.NewEncoder(w).Encode(fetchPods(deploy.Label, deploy.Namespace))
+	log.Println(podMap)
 
 }
 
