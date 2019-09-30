@@ -1,9 +1,16 @@
 ---
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: kcapture
+  labels:
+    name: kcapture
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kcapture
-  namespace: kube-system
+  namespace: kcapture
   labels:
     kubernetes.io/cluster-service: "true"
 ---
@@ -11,6 +18,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kcapture
+  namespace: kcapture
   labels:
     app: kcapture
 spec:
@@ -59,4 +67,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kcapture
-  namespace: kube-system
+  namespace: kcapture
