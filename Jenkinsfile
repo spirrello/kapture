@@ -80,11 +80,11 @@ node {
 }
 
 
-node( Cluster.AT4D_C3.deployAgent() ) {
+node( Cluster.AT4D_C4.deployAgent() ) {
     unstash 'k8syaml'
 
-    //Liaison at4d-c3 Dev/QA
-        deploymentAt4dC3 = deployments.create(
+    //Liaison at4d-c4 Dev/QA
+        deploymentAt4dC4 = deployments.create(
             name: "${k8sDeployName}",
             version: "${dockerImageVer}",
             description: "${k8sDeployName}",
@@ -96,22 +96,22 @@ node( Cluster.AT4D_C3.deployAgent() ) {
             gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
             kubectl: kubectl,
             namespace: Namespace.KUBE_SYSTEM,
-            clusters: [ Cluster.AT4D_C3 ]
+            clusters: [ Cluster.AT4D_C4 ]
 )
 
-    stage('validate on at4d-c3') {
+    stage('validate on at4d-c4') {
             milestone(500)
 
-            kubectl.validate(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+            kubectl.validate(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
     }
 
     if("master" == env.BRANCH_NAME) {
 
-        stage('deploy to at4d-c3') {
+        stage('deploy to at4d-c4') {
             milestone(600)
 
-            kubectl.deploy(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
-            kubectl.rolloutStatus(deploymentAt4dC3, Namespace.KUBE_SYSTEM, Cluster.AT4D_C3)
+            kubectl.deploy(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+            kubectl.rolloutStatus(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
         }
     }
 }

@@ -17,7 +17,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kcapture
+  name: kcapture-api
   namespace: kcapture
   labels:
     app: kcapture
@@ -25,7 +25,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kcapture
+      app: kcapture-api
   updateStrategy:
     type: RollingUpdate
   template:
@@ -36,7 +36,7 @@ spec:
       serviceAccountName: kcapture
       containers:
       - name: kcapture
-        image: registry-ci.at4d.liacloud.com/devops/kcapture:0.1.0
+        image: registry-ci.at4d.liacloud.com/devops/kcapture-api:0.1.0
       resources:
       requests:
         memory: "128i"
@@ -68,3 +68,34 @@ subjects:
 - kind: ServiceAccount
   name: kcapture
   namespace: kcapture
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kcapture-node
+  namespace: kcapture
+  labels:
+    k8s-app: kcapture-node
+spec:
+  selector:
+    matchLabels:
+      name: kcapture-node
+  template:
+    metadata:
+      labels:
+        name: kcapture-node
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: kcapture-node
+        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.1.0
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+      terminationGracePeriodSeconds: 5

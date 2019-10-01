@@ -36,3 +36,7 @@ func TestHealthCheck(t *testing.T) {
 	// 		rr.Body.String(), expected)
 	// }
 }
+
+// func TestnodeAPI() {
+
+// }

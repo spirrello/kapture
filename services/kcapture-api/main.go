@@ -153,7 +153,7 @@ func pods(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &deploy)
 
 	podMap := fetchPods(deploy.Label, deploy.Namespace)
-	json.NewEncoder(w).Encode(fetchPods(deploy.Label, deploy.Namespace))
+	json.NewEncoder(w).Encode(podMap)
 
 	nodeInstruct(podMap)
 }
