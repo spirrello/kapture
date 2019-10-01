@@ -43,7 +43,7 @@ def goBuild(serviceList) {
             //     cd ../
 
             sh """
-                ls -ltr $WORKSPACE/$it
+                ls -ltr $it
 
 
             """
