@@ -95,14 +95,13 @@ node( Cluster.AT4D_C4.deployAgent() ) {
             gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
             gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
             kubectl: kubectl,
-            namespace: Namespace.KUBE_SYSTEM,
             clusters: [ Cluster.AT4D_C4 ]
 )
 
     stage('validate on at4d-c4') {
             milestone(500)
 
-            kubectl.validate(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+            kubectl.validate(deploymentAt4dC4, Cluster.AT4D_C4)
     }
 
     if("master" == env.BRANCH_NAME) {
@@ -110,8 +109,8 @@ node( Cluster.AT4D_C4.deployAgent() ) {
         stage('deploy to at4d-c4') {
             milestone(600)
 
-            kubectl.deploy(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
-            kubectl.rolloutStatus(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+            kubectl.deploy(deploymentAt4dC4, Cluster.AT4D_C4)
+            kubectl.rolloutStatus(deploymentAt4dC4, Cluster.AT4D_C4)
         }
     }
 }
