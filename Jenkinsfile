@@ -15,8 +15,8 @@ def dockerRegistryCredential = "registry-ci"
 // def dockerImageName = "devops/kcapture"
 def dockerImageName = "devops/"
 def k8sDeployName = "kcapture"
-
 def serviceList = ["kcapture-api","kcapture-node"]
+
 //Golang version
 goVersion = "1.12.7"
 
@@ -33,7 +33,7 @@ def goBuild() {
 
         //loop through the services directory to compile and build the docker images
 
-        serviceList.each {
+       ["kcapture-api","kcapture-node"].each {
 
             // cd $WORKSPACE/services/$it
             //     docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go build -o $it
