@@ -29,11 +29,12 @@ def buildCommand(command) {
         """
 }
 
-def goBuild() {
+@NonCPS
+def goBuild(serviceList) {
 
         //loop through the services directory to compile and build the docker images
 
-       ["kcapture-api","kcapture-node"].each {
+       serviceList.each {
 
             // cd $WORKSPACE/services/$it
             //     docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go build -o $it
@@ -42,7 +43,7 @@ def goBuild() {
             //     cd ../
 
             sh """
-                ls -ltr $WORKSPACE
+                ls -ltr $WORKSPACE/$it
 
 
             """
@@ -76,7 +77,7 @@ node {
         milestone(200)
 
         //buildCommand("go build .")
-        goBuild()
+        goBuild(serviceList)
         // sh """
         //     ls -ltr $WORKSPACE
 
