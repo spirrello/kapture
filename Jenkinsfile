@@ -29,12 +29,15 @@ def buildCommand(command) {
         """
 }
 
-@NonCPS
+//@NonCPS
 def goBuild(serviceList) {
 
-        //loop through the services directory to compile and build the docker images
 
-       serviceList.each {
+        sh """
+        ln -sf ${WORKSPACE} ${GOPATH}/src/github.com/liaisontechnologies/kcapture
+        """
+        //loop through the services directory to compile and build the docker images
+        serviceList.each {
 
             sh """
                 ls -ltr services/$it
