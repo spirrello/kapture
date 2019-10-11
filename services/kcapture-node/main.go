@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/liaisontechnologies/kcapture/models"
+	"kcapture/models"
 )
 
 //healthCheck to run check.

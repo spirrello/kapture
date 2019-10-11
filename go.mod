@@ -1,4 +1,4 @@
-module github.com/liaisontechnologies/kcapture
+module kcapture
 
 go 1.12
 
