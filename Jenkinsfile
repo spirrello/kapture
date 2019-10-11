@@ -34,7 +34,7 @@ def goBuild(serviceList) {
 
 
         sh """
-        mkdir -p $GOPATH/src/github.com/liaisontechnologies/kcapture
+        mkdir -p ${WORKSPACE}/$GOPATH/src/github.com/liaisontechnologies/kcapture
         ln -sf ${WORKSPACE} ${GOPATH}/src/github.com/liaisontechnologies/kcapture/models
         """
         //loop through the services directory to compile and build the docker images
