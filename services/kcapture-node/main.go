@@ -6,8 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"kcapture/models"
+
+	"github.com/gorilla/mux"
 )
 
 //healthCheck to run check.
