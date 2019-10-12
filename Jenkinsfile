@@ -48,7 +48,7 @@ def goBuild(serviceList) {
 
             sh """
                 ls -ltr $WORKSPACE
-                docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go install $GOPATH/src/kcapture/services/$it
+                docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go install $GOPATH/src/kcapture/services/kcapture-api
 
             """
         //}
