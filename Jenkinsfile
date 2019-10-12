@@ -48,7 +48,7 @@ def goBuild(serviceList) {
 
             sh """
                 ls -ltr $WORKSPACE
-                docker run --rm  -v "$WORKSPACE":/home/ busybox ls -ltr
+                docker run --rm  -v "$WORKSPACE":/home/ busybox ls -ltr /home
 
             """
         //}
