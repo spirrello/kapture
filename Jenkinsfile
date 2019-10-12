@@ -42,15 +42,16 @@ def goBuild(serviceList) {
         //loop through the services directory to compile and build the docker images
         //cd services/$it
         //ldd $GOBIN/$it | grep 'not a dynamic executable'
-        serviceList.each {
+        //docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go install $GOPATH/src/kcapture/services/$it
+        //ls -ltr services/$it
+        //serviceList.each {
 
             sh """
-                echo $GOPATH
-                ls -ltr services/$it
-                docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go install $GOPATH/src/kcapture/services/$it
+                ls -ltr $WORKSPACE
+                docker run -it --rm  -v "$WORKSPACE":/home/ -w /home/ ls -ltr
 
             """
-        }
+        //}
 }
 
 
