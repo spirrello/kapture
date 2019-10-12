@@ -48,7 +48,7 @@ def goBuild(serviceList) {
 
             sh """
                 ls -ltr $WORKSPACE
-                docker run -it --rm  -v "$WORKSPACE":/home/ -w /home/ ls -ltr
+                docker run --rm  -v "$WORKSPACE":/home/ ls -ltr
 
             """
         //}
