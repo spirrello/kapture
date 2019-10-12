@@ -43,8 +43,8 @@ kind: ConfigMap
 metadata:
   name: kcapture
 data:
-  CAPTURE_PODS: "k8s-app=kcapture-node"
-  CAPTURE_PODS_NAMESPACE: "kcapture"
+  CAPTURE_PODS: "name=kcapture-node"
+  CAPTURE_PODS_NAMESPACE: "kube-system"
   NODE_API: "127.0.0.1:9091"
 ---
 apiVersion: apps/v1
@@ -72,6 +72,9 @@ spec:
         image: registry-ci.at4d.liacloud.com/devops/kcapture-api:0.1.0
         ports:
         - containerPort: 9090
+        envFrom:
+        - configMapRef:
+            name: kcapture
       resources:
       requests:
         memory: "128i"
