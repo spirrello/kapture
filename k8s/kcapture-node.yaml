@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kcapture-node
+  namespace: kube-system
+  labels:
+    k8s-app: kcapture-node
+spec:
+  selector:
+    matchLabels:
+      name: kcapture-node
+  template:
+    metadata:
+      labels:
+        name: kcapture-node
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: kcapture-node
+        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.1.0
+        ports:
+        - containerPort: 9091
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+      terminationGracePeriodSeconds: 5

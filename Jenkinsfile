@@ -32,29 +32,52 @@ def buildCommand(command) {
 
 def goBuild(serviceList) {
 
-
-        // sh """
-        //     mkdir -p $GOPATH/src/github.com/liaisontechnologies/kcapture
-
-        // """
-        //mkdir -p ${WORKSPACE}$GOPATH/src/github.com/liaisontechnologies/kcapture
-        //ln -sf ${WORKSPACE} ${GOPATH}/src/github.com/liaisontechnologies/kcapture/models
-        //loop through the services directory to compile and build the docker images
-        //cd services/$it
-        //ldd $GOBIN/$it | grep 'not a dynamic executable'
-        //docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go install $GOPATH/src/kcapture/services/$it
-        //ls -ltr services/$it
-        // ls -ltr $WORKSPACE
-        // docker run --rm -v "$WORKSPACE":/usr/src/kcapture -w /usr/src/kcapture -e CGO_ENABLED=0 golang:${goVersion} go install $GOPATH/src/kcapture/services/kcapture-api
-        //serviceList.each {
+        serviceList.each {
 
             sh """
-
-
+                docker build -t $it:$env.VERSION -f $it-docker .
+                docker images
             """
-        //}
+        }
 }
 
+/*
+Function for handling validation and deployment of the kcapture pods.  This helps with managing the deployment
+and daemonset.
+*/
+def k8sProcessing(kubectl, deployments, dockerImageVer, dockerImageName, serviceList, process) {
+
+    serviceList.each {
+        //Liaison at4d-c4 Dev/QA
+        k8sfile = "k8s/$it" + ".yaml"
+        deploymentAt4dC4 = deployments.create(
+            name: "$it",
+            version: "${dockerImageVer}",
+            description: "$it",
+            dockerImageName: "${dockerImageName}$it",   // Without registry!
+            dockerImageTag: "${dockerImageVer}",
+            yamlFile: "${k8sfile}",   // optional, defaults to 'K8sfile.yaml'
+            gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
+            gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
+            gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
+            kubectl: kubectl,
+            namespace: Namespace.KUBE_SYSTEM,
+            clusters: [ Cluster.AT4D_C4 ]
+        )
+
+
+        switch(process) {
+            case "validate":
+                kubectl.validate(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+            case "deploy":
+                kubectl.deploy(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+                kubectl.rolloutStatus(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+            default:
+                println("No valid options submitted.")
+        }
+    }
+
+}
 
 node {
 
@@ -68,77 +91,40 @@ node {
         currentBuild.displayName  = "${env.VERSION}-${env.BUILD_NUMBER}"
         dockerImageVer = env.VERSION
 
-        stash includes: 'k8sfile.yaml', name: 'k8syaml'
+        stash includes: 'k8s/*.yaml', name: 'k8syaml'
     }
 
-    // stage('Test') {
-    //     milestone(100)
 
-    //     buildCommand("go vet .")
+    stage('Build/Publish Docker Images') {
+        milestone(300)
 
-    // }
-
-    stage('Build') {
-        milestone(200)
-
-        //buildCommand("go build .")
-        goBuild(serviceList)
-        // sh """
-        //     ls -ltr $WORKSPACE
-
-        //     ldd kcapture | grep 'not a dynamic executable'
-
-        // """
-
+        serviceList.each {
+            image = docker.build("${dockerRegistry}/${dockerImageName}$it:${env.VERSION}", "-f $it-docker .")
+            withDockerRegistry(url: "https://${dockerRegistry}", credentialsId: dockerRegistryCredential) {
+                image.push()
+            }
+        }
     }
 
-    // stage('Build Docker image') {
-    //     milestone(300)
-
-    //     image = docker.build("${dockerRegistry}/${dockerImageName}:${env.VERSION}")
-    // }
-
-    // stage('Publish Docker image') {
-    //     milestone(400)
-
-    //         withDockerRegistry(url: "https://${dockerRegistry}", credentialsId: dockerRegistryCredential) {
-    //         image.push()
-    //     }
-    // }
 }
 
 
-// node( Cluster.AT4D_C4.deployAgent() ) {
-//     unstash 'k8syaml'
+node( Cluster.AT4D_C4.deployAgent() ) {
+    unstash 'k8syaml'
 
-//     //Liaison at4d-c4 Dev/QA
-//         deploymentAt4dC4 = deployments.create(
-//             name: "${k8sDeployName}",
-//             version: "${dockerImageVer}",
-//             description: "${k8sDeployName}",
-//             dockerImageName: "${dockerImageName}",   // Without registry!
-//             dockerImageTag: "${dockerImageVer}",
-//             yamlFile: 'k8sfile.yaml',   // optional, defaults to 'K8sfile.yaml'
-//             gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
-//             gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
-//             gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
-//             kubectl: kubectl,
-//             clusters: [ Cluster.AT4D_C4 ]
-// )
+    stage('validate on at4d-c4') {
+            milestone(500)
 
-//     stage('validate on at4d-c4') {
-//             milestone(500)
+            k8sProcessing(kubectl, deployments, dockerImageVer, dockerImageName, serviceList, "validate")
+    }
 
-//             kubectl.validate(deploymentAt4dC4, Cluster.AT4D_C4)
-//     }
+    if("master" == env.BRANCH_NAME) {
 
-//     if("master" == env.BRANCH_NAME) {
+        stage('deploy to at4d-c4') {
+            milestone(600)
 
-//         stage('deploy to at4d-c4') {
-//             milestone(600)
+            k8sProcessing(kubectl, deployments, dockerImageVer, dockerImageName, serviceList, "deploy")
 
-//             kubectl.deploy(deploymentAt4dC4, Cluster.AT4D_C4)
-//             kubectl.rolloutStatus(deploymentAt4dC4, Cluster.AT4D_C4)
-//         }
-//     }
-// }
+        }
+    }
+}
