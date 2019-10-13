@@ -125,7 +125,8 @@ func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 	return podMap
 }
 
-//nodeInstruct posts to the nodeAPI with instructions
+//nodeInstruct posts to the nodeAPI with instructions.
+//Need to post the TCPDump details along with a start/stop.
 func nodeInstruct(podMap map[string][]models.PodInfo) {
 	bytesRepresentation, err := json.Marshal(podMap)
 	if err != nil {

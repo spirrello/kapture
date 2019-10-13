@@ -25,3 +25,9 @@ type PodCollection struct {
 	// NodeName string
 	Pods []PodInfo `json:"pods"`
 }
+
+//CaptureInstructions organizes the instructions
+//for the node API
+type CaptureInstructions struct {
+	State string `json:"state"`
+}
