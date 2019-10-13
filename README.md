@@ -14,3 +14,9 @@ KUBECONFIG=config
 ```
 curl -H "Content-Type: application/json"  -X POST http://localhost:9090/v1/pods -d '{"label":"app=nginx123"}'
 ```
+
+## Testing kcapture-node
+
+```
+docker run -it --privileged=true --net=host --rm busybox-tcpdump --name=busybox-tcpdump
+```
