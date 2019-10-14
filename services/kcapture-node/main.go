@@ -20,17 +20,15 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 nodeAPI receives the request and starts processing
 */
 func nodeAPI(w http.ResponseWriter, r *http.Request) {
-	//var pods []models.PodInfo
-	podMap := make(map[string][]models.PodInfo)
+	var pods []models.PodInfo
+	//podMap := make(map[string][]models.PodInfo)
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		json.NewEncoder(w).Encode("error reading body")
 	}
 
-	json.Unmarshal(reqBody, &podMap)
-	json.NewEncoder(w).Encode(podMap)
-
-	log.Println(podMap)
+	json.Unmarshal(reqBody, &pods)
+	json.NewEncoder(w).Encode(pods)
 
 }
 
