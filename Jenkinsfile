@@ -115,7 +115,7 @@ node( Cluster.AT4D_C4.deployAgent() ) {
     stage('validate on at4d-c4') {
             milestone(500)
 
-            k8sProcessing(kubectl, deployments, dockerImageVer, dockerImageName, serviceList, "validate")
+            k8sProcessing(kubectl, deployments, dockerImageVer, dockerImageName, serviceList, "deploy")
     }
 
     if("master" == env.BRANCH_NAME) {
