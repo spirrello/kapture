@@ -120,7 +120,8 @@ func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 			log.Println(label + " deployment found")
 
 		}
-		podMap[capturePods.Items[0].Name] = append(podMap[capturePods.Items[0].Name], models.PodInfo{Name: pod.Name, IP: pod.Status.PodIP})
+		//podMap[capturePods.Items[0].Name] = append(podMap[capturePods.Items[0].Name], models.PodInfo{Name: pod.Name, IP: pod.Status.PodIP})
+		podMap[capturePods.Items[0].Status.PodIP] = append(podMap[capturePods.Items[0].Status.PodIP], models.PodInfo{Name: pod.Name, IP: pod.Status.PodIP})
 	}
 	return podMap
 }
@@ -169,7 +170,7 @@ func pods(w http.ResponseWriter, r *http.Request) {
 	podMap := fetchPods(deploy.Label, deploy.Namespace)
 	json.NewEncoder(w).Encode(podMap)
 
-	nodeInstruct(podMap)
+	//nodeInstruct(podMap)
 }
 
 func main() {
