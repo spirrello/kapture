@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"kcapture/models"
+	"kcapture/shared"
 
 	"github.com/gorilla/mux"
 
@@ -19,19 +20,19 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-//healthCheck to run check.
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(models.LogFormat{Loglevel: "info", Message: "200 OK"})
-}
+// //healthCheck to run check.
+// func healthCheck(w http.ResponseWriter, r *http.Request) {
+// 	json.NewEncoder(w).Encode(models.LogFormat{Loglevel: "info", Message: "200 OK"})
+// }
 
-//logMessage prints in JSON format
-func logMessage(logLevel, message string) {
+// //logMessage prints in JSON format
+// func logMessage(logLevel, message string) {
 
-	logStruct := models.LogFormat{Loglevel: logLevel, Message: message}
-	logStr, _ := json.Marshal(logStruct)
-	log.Println(string(logStr))
+// 	logStruct := models.LogFormat{Loglevel: logLevel, Message: message}
+// 	logStr, _ := json.Marshal(logStruct)
+// 	log.Println(string(logStr))
 
-}
+// }
 
 //externalKubeClient creates the external cluster config
 func externalKubeClient(kubeconfig string) (*kubernetes.Clientset, error) {
@@ -96,7 +97,7 @@ func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 	//fetch pods
 	pods, err := clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: label})
 	if len(pods.Items) == 0 {
-		logMessage("ERROR", label+" not found")
+		shared.LogMessage("ERROR", label+" not found")
 	}
 	if errors.IsNotFound(err) {
 		log.Fatal("Pod not found\n")
@@ -175,8 +176,11 @@ func pods(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	//Fetch the API PORT
+	apiPort := shared.GetEnv("KCAPTURE_API_PORT", "9090")
+
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/v1/healthcheck", healthCheck)
+	router.HandleFunc("/v1/healthcheck", shared.HealthCheck)
 	router.HandleFunc("/v1/pods", pods).Methods("POST")
-	log.Fatal(http.ListenAndServe(":9090", router))
+	log.Fatal(http.ListenAndServe(":"+apiPort, router))
 }

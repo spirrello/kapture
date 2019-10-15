@@ -7,14 +7,15 @@ import (
 	"net/http"
 
 	"kcapture/models"
+	"kcapture/shared"
 
 	"github.com/gorilla/mux"
 )
 
-//healthCheck to run check.
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(models.LogFormat{Loglevel: "info", Message: "200 OK"})
-}
+// //healthCheck to run check.
+// func healthCheck(w http.ResponseWriter, r *http.Request) {
+// 	json.NewEncoder(w).Encode(models.LogFormat{Loglevel: "info", Message: "200 OK"})
+// }
 
 /*
 nodeAPI receives the request and starts processing
@@ -25,6 +26,7 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		json.NewEncoder(w).Encode("error reading body")
+		shared.LogMessage("ERROR", "error reading body")
 	}
 
 	json.Unmarshal(reqBody, &pods)
@@ -34,8 +36,11 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	//Fetch the API PORT
+	apiPort := shared.GetEnv("NODE_API_PORT", "9091")
+
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/v1/healthcheck", healthCheck)
+	router.HandleFunc("/v1/healthcheck", shared.HealthCheck)
 	router.HandleFunc("/v1/nodeapi", nodeAPI).Methods("POST")
-	log.Fatal(http.ListenAndServe(":9091", router))
+	log.Fatal(http.ListenAndServe(":"+apiPort, router))
 }
