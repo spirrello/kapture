@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os/exec"
 
 	"kcapture/models"
 	"kcapture/shared"
@@ -31,6 +33,17 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(reqBody, &pods)
 	json.NewEncoder(w).Encode(pods)
+
+	testCMD()
+}
+
+func testCMD() {
+	cmd := exec.Command("ls", "-lah")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("cmd.Run() failed with %s\n", err)
+	}
+	fmt.Printf("combined out:\n%s\n", string(out))
 
 }
 

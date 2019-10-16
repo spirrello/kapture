@@ -23,6 +23,8 @@ spec:
         image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.1.0
         ports:
         - containerPort: 9091
+        securityContext:
+          privileged: true
         resources:
           limits:
             memory: "256Mi"
