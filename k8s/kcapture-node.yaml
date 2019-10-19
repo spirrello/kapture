@@ -3,17 +3,17 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: kcapture-node
-  namespace: kube-system
+  namespace: kcapture
   labels:
-    k8s-app: kcapture-node
+    app: kcapture-node
 spec:
   selector:
     matchLabels:
-      name: kcapture-node
+      app: kcapture-node
   template:
     metadata:
       labels:
-        name: kcapture-node
+        app: kcapture-node
     spec:
       hostNetwork: true
       tolerations:
@@ -21,9 +21,9 @@ spec:
         effect: NoSchedule
       containers:
       - name: kcapture-node
-        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.1.0
+        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.2.9
         ports:
-        - containerPort: 9091
+        - containerPort: 9090
         securityContext:
           privileged: true
         resources:
@@ -34,3 +34,18 @@ spec:
             cpu: "100m"
             memory: "128Mi"
       terminationGracePeriodSeconds: 5
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: kcapture-node
+  namespace: kcapture
+spec:
+  podSelector:
+    matchLabels:
+      app: kcapture-node
+  ingress:
+  - from:
+      - podSelector:
+          matchLabels:
+            app: kcapture-api

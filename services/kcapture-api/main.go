@@ -136,7 +136,7 @@ func nodeInstruct(podMap map[string][]models.PodInfo) {
 
 		bytesRepresentation, err := json.Marshal(v)
 
-		_, err = http.Post("http://"+k+":9091/v1/nodeapi", "application/json", bytes.NewBuffer(bytesRepresentation))
+		_, err = http.Post("http://"+k+":9090/v1/nodeapi", "application/json", bytes.NewBuffer(bytesRepresentation))
 		if err != nil {
 			log.Fatalln(err)
 		}
