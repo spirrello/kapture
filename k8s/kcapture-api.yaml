@@ -68,7 +68,7 @@ spec:
       serviceAccountName: kcapture
       containers:
       - name: kcapture
-        image: registry-ci.at4d.liacloud.com/devops/kcapture-api:0.2.9
+        image: registry-ci.at4d.liacloud.com/devops/kcapture-api:0.2.10
         ports:
         - containerPort: 9090
         envFrom:

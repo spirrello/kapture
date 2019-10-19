@@ -21,7 +21,7 @@ spec:
         effect: NoSchedule
       containers:
       - name: kcapture-node
-        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.2.9
+        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.2.10
         ports:
         - containerPort: 9090
         securityContext:
