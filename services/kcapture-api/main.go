@@ -129,16 +129,17 @@ func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 
 //nodeInstruct posts to the nodeAPI with instructions.
 //Need to post the TCPDump details along with a start/stop.
-func nodeInstruct(podMap map[string][]models.PodInfo) {
+func nodeInstruct(podMap map[string][]models.PodInfo) (string, error) {
 
 	for k, v := range podMap {
-		//fmt.Println("k:", k, "v:", v)
+		// fmt.Println("k:", k, "v:", v)
 
 		bytesRepresentation, err := json.Marshal(v)
 
 		_, err = http.Post("http://"+k+":9090/v1/nodeapi", "application/json", bytes.NewBuffer(bytesRepresentation))
 		if err != nil {
 			log.Fatalln(err)
+			return "", err
 		}
 	}
 	// bytesRepresentation, err := json.Marshal(podMap)
@@ -151,6 +152,7 @@ func nodeInstruct(podMap map[string][]models.PodInfo) {
 	// if err != nil {
 	// 	log.Fatalln(err)
 	// }
+	return "200 OK", nil
 }
 
 /*
@@ -171,7 +173,12 @@ func pods(w http.ResponseWriter, r *http.Request) {
 	podMap := fetchPods(deploy.Label, deploy.Namespace)
 	json.NewEncoder(w).Encode(podMap)
 
-	nodeInstruct(podMap)
+	nodeInstructResult, err := nodeInstruct(podMap)
+	if err != nil {
+		json.NewEncoder(w).Encode(nodeInstructResult)
+	} else {
+		json.NewEncoder(w).Encode(err)
+	}
 }
 
 func main() {

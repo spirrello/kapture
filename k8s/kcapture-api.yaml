@@ -45,8 +45,9 @@ metadata:
   namespace: kcapture
 data:
   CAPTURE_PODS: "app=kcapture-node"
-  CAPTURE_PODS_NAMESPACE: "kube-system"
+  CAPTURE_PODS_NAMESPACE: "kcapture"
   NODE_API: "127.0.0.1:9091"
+  NODE_API_PORT: "9090"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -81,3 +82,16 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "500m"
+---
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kcapture-api
+  namespace: kcapture
+spec:
+  podSelector:
+    matchLabels:
+      app: kcapture-api
+  ingress:
+  - from: []

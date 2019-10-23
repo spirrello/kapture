@@ -22,6 +22,9 @@ spec:
       containers:
       - name: kcapture-node
         image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.2.10
+        envFrom:
+        - configMapRef:
+            name: kcapture
         ports:
         - containerPort: 9090
         securityContext:
@@ -35,8 +38,8 @@ spec:
             memory: "128Mi"
       terminationGracePeriodSeconds: 5
 ---
-kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
   name: kcapture-node
   namespace: kcapture
@@ -45,7 +48,22 @@ spec:
     matchLabels:
       app: kcapture-node
   ingress:
+  #FOR TEST PURPOSES ONLY
+  #- from: []
+  #Commenting out for now while we test
   - from:
       - podSelector:
           matchLabels:
             app: kcapture-api
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kcapture-api
+  namespace: kcapture
+spec:
+  podSelector:
+    matchLabels:
+      app: kcapture-api
+  ingress:
+  - from: []
