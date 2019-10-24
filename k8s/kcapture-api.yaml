@@ -83,7 +83,6 @@ spec:
             memory: "256Mi"
             cpu: "500m"
 ---
----
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

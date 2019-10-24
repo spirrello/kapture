@@ -55,15 +55,4 @@ spec:
       - podSelector:
           matchLabels:
             app: kcapture-api
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: kcapture-api
-  namespace: kcapture
-spec:
-  podSelector:
-    matchLabels:
-      app: kcapture-api
-  ingress:
-  - from: []
+
