@@ -175,9 +175,9 @@ func pods(w http.ResponseWriter, r *http.Request) {
 
 	nodeInstructResult, err := nodeInstruct(podMap)
 	if err != nil {
-		json.NewEncoder(w).Encode(nodeInstructResult)
-	} else {
 		json.NewEncoder(w).Encode(err)
+	} else {
+		json.NewEncoder(w).Encode(nodeInstructResult)
 	}
 }
 

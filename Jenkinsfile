@@ -61,17 +61,17 @@ def k8sProcessing(kubectl, deployments, dockerImageVer, dockerImageName, service
             gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
             gitRef: env.VERSION,        // optional, defaults to env.GIT_COMMIT
             kubectl: kubectl,
-            namespace: Namespace.KUBE_SYSTEM,
+            namespace: Namespace.KCAPTURE,
             clusters: [ Cluster.AT4D_C4 ]
         )
 
 
         switch(process) {
             case "validate":
-                kubectl.validate(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+                kubectl.validate(deploymentAt4dC4, Namespace.KCAPTURE, Cluster.AT4D_C4)
             case "deploy":
-                kubectl.deploy(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
-                kubectl.rolloutStatus(deploymentAt4dC4, Namespace.KUBE_SYSTEM, Cluster.AT4D_C4)
+                kubectl.deploy(deploymentAt4dC4, Namespace.KCAPTURE, Cluster.AT4D_C4)
+                kubectl.rolloutStatus(deploymentAt4dC4, Namespace.KCAPTURE, Cluster.AT4D_C4)
             default:
                 println("No valid options submitted.")
         }

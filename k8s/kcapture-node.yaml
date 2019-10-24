@@ -21,7 +21,7 @@ spec:
         effect: NoSchedule
       containers:
       - name: kcapture-node
-        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.2.10
+        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.2.12
         envFrom:
         - configMapRef:
             name: kcapture
@@ -37,22 +37,33 @@ spec:
             cpu: "100m"
             memory: "128Mi"
       terminationGracePeriodSeconds: 5
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: kcapture-node
-  namespace: kcapture
-spec:
-  podSelector:
-    matchLabels:
-      app: kcapture-node
-  ingress:
-  #FOR TEST PURPOSES ONLY
-  #- from: []
-  #Commenting out for now while we test
-  - from:
-      - podSelector:
-          matchLabels:
-            app: kcapture-api
+# ---
+# apiVersion: extensions/v1beta1
+# kind: NetworkPolicy
+# metadata:
+#   name: kcapture-node-default-deny
+#   namespace: kcapture
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: kcapture-node
+#   ingress: []
+# ---
+# apiVersion: extensions/v1beta1
+# kind: NetworkPolicy
+# metadata:
+#   name: kcapture-node
+#   namespace: kcapture
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: kcapture-node
+#   ingress:
+#   #FOR TEST PURPOSES ONLY
+#   #- from: []
+#   #Commenting out for now while we test
+#   - from:
+#       - podSelector:
+#           matchLabels:
+#             app: kcapture-api
 
