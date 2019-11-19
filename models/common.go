@@ -3,6 +3,7 @@ package models
 //LogFormat struct for return log messages in json format
 type LogFormat struct {
 	Loglevel string `json:"level"`
+	Caller   string `json:"caller"`
 	Message  string `json:"message"`
 }
 
