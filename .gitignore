@@ -1,3 +1,5 @@
 config
 kubeconfig
 .vscode/*
+Jenkinsfile
+
