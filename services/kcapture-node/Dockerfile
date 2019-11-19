@@ -1,5 +1,5 @@
 FROM alpine:latest
-LABEL maintainer "Stefano Pirrello <spirrello@opentext.com>"
+LABEL maintainer "Stefano Pirrello <spirrello@gmail.com>"
 COPY Dockerfile /Dockerfile
 COPY .bashrc /root/.bashrc
 
