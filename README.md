@@ -1,4 +1,4 @@
-# kcapture
+# kapture
 Run packet captures on Kubernetes pods
 
 
@@ -15,7 +15,7 @@ KUBECONFIG=config
 curl -H "Content-Type: application/json"  -X POST http://localhost:9090/v1/pods -d '{"label":"app=nginx123"}'
 ```
 
-## Testing kcapture-node API
+## Testing kapture-node API
 
 ```
 curl -H "Content-Type: application/json" -X POST http://localhost:9091/v1/nodeapi -d '[{"name":"nginx-deployment-bb-hsec-78848db5c9-7pmjb","node":"","ip":"10.155.78.226"}]'

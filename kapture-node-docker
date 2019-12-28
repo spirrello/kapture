@@ -26,7 +26,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /kcapture-node
 #COPY --from=builder /kcapture-node .
 
 FROM alpine:latest
-LABEL maintainer "Stefano Pirrello <spirrello@opentext.com>"
+LABEL maintainer "Stefano Pirrello <spirrello@gmail.com>"
 #COPY Dockerfile /Dockerfile
 #COPY .bashrc /root/.bashrc
 
