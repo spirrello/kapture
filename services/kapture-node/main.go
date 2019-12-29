@@ -37,7 +37,7 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func testCMD() {
-	cmd := exec.Command("tcpdump -i eth0")
+	cmd := exec.Command("tcpdump", "-i", "eth0")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %s\n", err)
