@@ -2,29 +2,29 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: kcapture-node
-  namespace: kcapture
+  name: kapture-node
+  namespace: kapture
   labels:
-    app: kcapture-node
+    app: kapture-node
 spec:
   selector:
     matchLabels:
-      app: kcapture-node
+      app: kapture-node
   template:
     metadata:
       labels:
-        app: kcapture-node
+        app: kapture-node
     spec:
       hostNetwork: true
       tolerations:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
-      - name: kcapture-node
-        image: registry-ci.at4d.liacloud.com/devops/kcapture-node:0.2.12
+      - name: kapture-node
+        image: registry-ci.at4d.liacloud.com/devops/kapture-node:0.2.12
         envFrom:
         - configMapRef:
-            name: kcapture
+            name: kapture
         ports:
         - containerPort: 9090
         securityContext:
@@ -41,23 +41,23 @@ spec:
 # apiVersion: extensions/v1beta1
 # kind: NetworkPolicy
 # metadata:
-#   name: kcapture-node-default-deny
-#   namespace: kcapture
+#   name: kapture-node-default-deny
+#   namespace: kapture
 # spec:
 #   podSelector:
 #     matchLabels:
-#       app: kcapture-node
+#       app: kapture-node
 #   ingress: []
 # ---
 # apiVersion: extensions/v1beta1
 # kind: NetworkPolicy
 # metadata:
-#   name: kcapture-node
-#   namespace: kcapture
+#   name: kapture-node
+#   namespace: kapture
 # spec:
 #   podSelector:
 #     matchLabels:
-#       app: kcapture-node
+#       app: kapture-node
 #   ingress:
 #   #FOR TEST PURPOSES ONLY
 #   #- from: []
@@ -65,5 +65,5 @@ spec:
 #   - from:
 #       - podSelector:
 #           matchLabels:
-#             app: kcapture-api
+#             app: kapture-api
 

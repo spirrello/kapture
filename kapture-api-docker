@@ -4,7 +4,7 @@ LABEL maintainer="Stefano Pirrello <spirrello@gmail.com>"
 
 ENV GO111MODULE=on
 
-WORKDIR /go/src/kcapture
+WORKDIR /go/src/kapture
 
 COPY go.mod go.sum ./
 
@@ -12,9 +12,9 @@ RUN go mod download
 
 COPY . .
 
-WORKDIR /go/src/kcapture/services/kcapture-api
+WORKDIR /go/src/kapture/services/kapture-api
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /kcapture-api
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /kapture-api
 
 
 ####### Start new stage from scratch ########
@@ -23,6 +23,6 @@ FROM scratch
 
 WORKDIR /
 
-COPY --from=builder /kcapture-api .
+COPY --from=builder /kapture-api .
 
-ENTRYPOINT ["/kcapture-api"]
+ENTRYPOINT ["/kapture-api"]

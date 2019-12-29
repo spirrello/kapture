@@ -2,22 +2,22 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kcapture
+  name: kapture
   labels:
-    name: kcapture
+    name: kapture
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: kcapture
-  namespace: kcapture
+  name: kapture
+  namespace: kapture
   labels:
     kubernetes.io/cluster-service: "true"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kcapture
+  name: kapture
 rules:
 - apiGroups: [""]
   resources: ["pods"]
@@ -26,55 +26,55 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kcapture
+  name: kapture
   labels:
     kubernetes.io/cluster-service: "true"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kcapture
+  name: kapture
 subjects:
 - kind: ServiceAccount
-  name: kcapture
-  namespace: kcapture
+  name: kapture
+  namespace: kapture
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kcapture
-  namespace: kcapture
+  name: kapture
+  namespace: kapture
 data:
-  CAPTURE_PODS: "app=kcapture-node"
-  CAPTURE_PODS_NAMESPACE: "kcapture"
+  CAPTURE_PODS: "app=kapture-node"
+  CAPTURE_PODS_NAMESPACE: "kapture"
   NODE_API: "127.0.0.1:9091"
   NODE_API_PORT: "9090"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kcapture-api
-  namespace: kcapture
+  name: kapture-api
+  namespace: kapture
   labels:
-    app: kcapture-api
+    app: kapture-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kcapture-api
+      app: kapture-api
   template:
     metadata:
       labels:
-        app: kcapture-api
+        app: kapture-api
     spec:
-      serviceAccountName: kcapture
+      serviceAccountName: kapture
       containers:
-      - name: kcapture
-        image: registry-ci.at4d.liacloud.com/devops/kcapture-api:0.2.12
+      - name: kapture
+        image: registry-ci.at4d.liacloud.com/devops/kapture-api:0.2.12
         ports:
         - containerPort: 9090
         envFrom:
         - configMapRef:
-            name: kcapture
+            name: kapture
         resources:
           requests:
             memory: "128Mi"
@@ -89,7 +89,7 @@ kind: NetworkPolicy
 metadata:
   annotations:
   name: default-deny
-  namespace: kcapture
+  namespace: kapture
 spec:
   podSelector: {}
   egress:
@@ -101,11 +101,11 @@ spec:
 apiVersion: extensions/v1beta1
 kind: NetworkPolicy
 metadata:
-  name: kcapture-api
-  namespace: kcapture
+  name: kapture-api
+  namespace: kapture
 spec:
   podSelector:
     matchLabels:
-      app: kcapture-api
+      app: kapture-api
   ingress:
   - from: []

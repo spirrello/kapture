@@ -2,7 +2,7 @@ package shared
 
 import (
 	"encoding/json"
-	"kcapture/models"
+	"kapture/models"
 	"log"
 	"net/http"
 	"os"

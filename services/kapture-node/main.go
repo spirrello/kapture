@@ -2,14 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os/exec"
 
-	"kcapture/models"
-	"kcapture/shared"
+	"kapture/models"
+	"kapture/shared"
 
 	"github.com/gorilla/mux"
 )
@@ -38,13 +37,13 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func testCMD() {
-	cmd := exec.Command("ls", "-lah")
+	cmd := exec.Command("tcpdump -i eth0")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}
-	fmt.Printf("combined out:\n%s\n", string(out))
-
+	//fmt.Printf("combined out:\n%s\n", string(out))
+	shared.LogMessage("ERROR", string(out))
 }
 
 func main() {

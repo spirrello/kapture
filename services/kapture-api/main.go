@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"os"
 
-	"kcapture/models"
-	"kcapture/shared"
+	"kapture/models"
+	"kapture/shared"
 
 	"github.com/gorilla/mux"
 

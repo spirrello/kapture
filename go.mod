@@ -1,4 +1,4 @@
-module kcapture
+module kapture
 
 go 1.12
 

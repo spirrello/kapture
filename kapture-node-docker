@@ -4,7 +4,7 @@ LABEL maintainer="Stefano Pirrello <spirrello@gmail.com>"
 
 ENV GO111MODULE=on
 
-WORKDIR /go/src/kcapture
+WORKDIR /go/src/kapture
 
 COPY go.mod go.sum ./
 
@@ -12,9 +12,9 @@ RUN go mod download
 
 COPY . .
 
-WORKDIR /go/src/kcapture/services/kcapture-node
+WORKDIR /go/src/kapture/services/kapture-node
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /kcapture-node
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /kapture-node
 
 
 ####### Start new stage from scratch ########
@@ -23,7 +23,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /kcapture-node
 
 #WORKDIR /
 
-#COPY --from=builder /kcapture-node .
+#COPY --from=builder /kapture-node .
 
 FROM alpine:latest
 LABEL maintainer "Stefano Pirrello <spirrello@gmail.com>"
@@ -36,6 +36,6 @@ RUN apk --no-cache --update --verbose add grep bash tcpdump && \
 
 WORKDIR /
 
-COPY --from=builder /kcapture-node .
+COPY --from=builder /kapture-node .
 
-ENTRYPOINT ["/kcapture-node"]
+ENTRYPOINT ["/kapture-node"]

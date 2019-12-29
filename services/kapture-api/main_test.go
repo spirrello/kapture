@@ -1,7 +1,7 @@
 package main
 
 import (
-	"kcapture/shared"
+	"kapture/shared"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -37,7 +37,3 @@ func TestHealthCheck(t *testing.T) {
 	// 		rr.Body.String(), expected)
 	// }
 }
-
-// func TestnodeAPI() {
-
-// }
