@@ -2,4 +2,4 @@ config
 kubeconfig
 .vscode/*
 Jenkinsfile
-
+**/*.pcap

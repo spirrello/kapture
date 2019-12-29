@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os/exec"
 
@@ -33,17 +32,24 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &pods)
 	json.NewEncoder(w).Encode(pods)
 
-	testCMD()
+	go runCapture()
 }
 
-func testCMD() {
-	cmd := exec.Command("tcpdump", "-i", "eth0")
+//runCapture executes packet captures
+func runCapture() {
+	//default ENV values
+	defaultNIC := shared.GetEnv("NODE_API_NIC", "en0")
+	defaultFullPacket := shared.GetEnv("NODE_API_FULL_PACKET", "0")
+	defaultCapTimeout := shared.GetEnv("NODE_API_CAP_TIMEOUT", "10")
+	defaultTotalCaptures := shared.GetEnv("NODE_API_TOTAL_CAPTURES", "1")
+	defaultCaptureFile := shared.GetEnv("NODE_API_CAPTURE_FILE", "test.pcap")
+
+	cmd := exec.Command("tcpdump", "-i", defaultNIC, "-nn", "-s", defaultFullPacket, "-G", defaultCapTimeout, "-W", defaultTotalCaptures, "-w", defaultCaptureFile)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
+		shared.LogMessage("ERROR", string("cmd.Run() failed with"+err.Error()))
 	}
-	//fmt.Printf("combined out:\n%s\n", string(out))
-	shared.LogMessage("ERROR", string(out))
+	shared.LogMessage("INFO", string(out))
 }
 
 func main() {
@@ -54,5 +60,5 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/v1/healthcheck", shared.HealthCheck)
 	router.HandleFunc("/v1/nodeapi", nodeAPI).Methods("POST")
-	log.Fatal(http.ListenAndServe(":"+apiPort, router))
+	http.ListenAndServe(":"+apiPort, router)
 }
