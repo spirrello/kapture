@@ -22,7 +22,7 @@ nodeAPI receives the request and starts processing
 */
 func nodeAPI(w http.ResponseWriter, r *http.Request) {
 	var pods []models.PodInfo
-	//podMap := make(map[string][]models.PodInfo)
+	podMap := make(map[string][]models.PodInfo)
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		json.NewEncoder(w).Encode("error reading body")
@@ -33,6 +33,7 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(pods)
 
 	go runCapture()
+
 }
 
 //runCapture executes packet captures
@@ -50,6 +51,15 @@ func runCapture() {
 		shared.LogMessage("ERROR", string("cmd.Run() failed with"+err.Error()))
 	}
 	shared.LogMessage("INFO", string(out))
+
+	// select {
+	// case <-ctx.Done():
+	// 	fmt.Println(ctx.Err())
+	// case <-c:
+	// 	fmt.Println("Unexpected success!")
+	// }
+	// fmt.Println("capture completed successfully")
+
 }
 
 func main() {
