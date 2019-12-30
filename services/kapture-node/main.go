@@ -47,7 +47,7 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//runCapture executes packet captures
+//runCapture invokes packetCapture with a channel
 func startCapture(ctx context.Context) {
 
 	shared.LogMessage("INFO", "new capture starting")
@@ -73,6 +73,7 @@ func startCapture(ctx context.Context) {
 
 }
 
+//packetCapture executes the packet capture
 func packetCapture(c chan struct{}) {
 
 	//default ENV values
