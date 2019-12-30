@@ -53,13 +53,7 @@ func startCapture(ctx context.Context) {
 	shared.LogMessage("INFO", "new capture starting")
 	// Create a channel for signal handling
 	c := make(chan struct{})
-	//default ENV values
-	// defaultNIC := shared.GetEnv("NODE_API_NIC", "en0")
-	// defaultFullPacket := shared.GetEnv("NODE_API_FULL_PACKET", "0")
 	defaultCapTimeout := shared.GetEnv("NODE_API_CAP_TIMEOUT", "10")
-	// defaultTotalCaptures := shared.GetEnv("NODE_API_TOTAL_CAPTURES", "1")
-	// defaultCaptureFile := shared.GetEnv("NODE_API_CAPTURE_FILE", "test.pcap")
-
 	// Define a cancellation after 1s in the context
 	capTimeout, _ := strconv.Atoi(defaultCapTimeout)
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(capTimeout+5)*time.Second)
@@ -72,7 +66,6 @@ func startCapture(ctx context.Context) {
 	select {
 	case <-ctx.Done():
 		fmt.Println(ctx.Err())
-		//shared.LogMessage("ERROR", string(ctx.Err()))
 	case <-c:
 		shared.LogMessage("INFO", "capture completed successfully")
 
