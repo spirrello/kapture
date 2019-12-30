@@ -38,7 +38,7 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 //runCapture executes packet captures
 func runCapture() {
 	//default ENV values
-	defaultNIC := shared.GetEnv("NODE_API_NIC", "en0")
+	defaultNIC := shared.GetEnv("NODE_API_NIC", "eth0")
 	defaultFullPacket := shared.GetEnv("NODE_API_FULL_PACKET", "0")
 	defaultCapTimeout := shared.GetEnv("NODE_API_CAP_TIMEOUT", "10")
 	defaultTotalCaptures := shared.GetEnv("NODE_API_TOTAL_CAPTURES", "1")
