@@ -3,3 +3,4 @@ kubeconfig
 .vscode/*
 Jenkinsfile
 **/*.pcap
+**/*.DS_Store

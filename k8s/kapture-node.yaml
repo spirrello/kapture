@@ -21,7 +21,8 @@ spec:
         effect: NoSchedule
       containers:
       - name: kapture-node
-        image: registry-ci.at4d.liacloud.com/devops/kapture-node:0.2.12
+        #image: registry-ci.at4d.liacloud.com/devops/kapture-node:0.2.12
+        image: spirrello/kapture-node:0.1.5
         envFrom:
         - configMapRef:
             name: kapture

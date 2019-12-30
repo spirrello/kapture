@@ -17,9 +17,7 @@ import (
 // 	json.NewEncoder(w).Encode(models.LogFormat{Loglevel: "info", Message: "200 OK"})
 // }
 
-/*
-nodeAPI receives the request and starts processing
-*/
+//nodeAPI receives the request and starts processing
 func nodeAPI(w http.ResponseWriter, r *http.Request) {
 	var pods []models.PodInfo
 	//podMap := make(map[string][]models.PodInfo)
@@ -32,19 +30,22 @@ func nodeAPI(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &pods)
 	json.NewEncoder(w).Encode(pods)
 
-	go runCapture()
+	for _, pod := range pods {
+		go runCapture(pod)
+	}
+
 }
 
 //runCapture executes packet captures
-func runCapture() {
+func runCapture(pod models.PodInfo) {
 	//default ENV values
-	defaultNIC := shared.GetEnv("NODE_API_NIC", "eth0")
+	defaultNIC := shared.GetEnv("NODE_API_NIC", "any")
 	defaultFullPacket := shared.GetEnv("NODE_API_FULL_PACKET", "0")
 	defaultCapTimeout := shared.GetEnv("NODE_API_CAP_TIMEOUT", "10")
 	defaultTotalCaptures := shared.GetEnv("NODE_API_TOTAL_CAPTURES", "1")
-	defaultCaptureFile := shared.GetEnv("NODE_API_CAPTURE_FILE", "test.pcap")
+	//defaultCaptureFile := shared.GetEnv("NODE_API_CAPTURE_FILE", "test.pcap")
 
-	cmd := exec.Command("tcpdump", "-i", defaultNIC, "-nn", "-s", defaultFullPacket, "-G", defaultCapTimeout, "-W", defaultTotalCaptures, "-w", defaultCaptureFile)
+	cmd := exec.Command("tcpdump", "-i", defaultNIC, "-nn", "-s", defaultFullPacket, "-G", defaultCapTimeout, "-W", defaultTotalCaptures, "-w", pod.Name+".pcap", "host", pod.IP)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		shared.LogMessage("ERROR", string("cmd.Run() failed with"+err.Error()))
