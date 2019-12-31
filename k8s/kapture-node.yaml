@@ -15,6 +15,9 @@ spec:
       labels:
         app: kapture-node
     spec:
+      volumes:
+      - name: pcap
+        emptyDir: {}
       hostNetwork: true
       tolerations:
       - key: node-role.kubernetes.io/master
@@ -37,6 +40,9 @@ spec:
           requests:
             cpu: "100m"
             memory: "128Mi"
+        volumeMounts:
+        - mountPath: /pcap
+          name: pcap
       terminationGracePeriodSeconds: 5
 # ---
 # apiVersion: extensions/v1beta1
