@@ -70,20 +70,33 @@ spec:
       containers:
       - name: kapture
         #image: registry-ci.at4d.liacloud.com/devops/kapture-api:0.2.12
-        image: spirrello/kapture-api:0.1.5
+        image: spirrello/kapture-api:0.1.6
         ports:
         - containerPort: 9090
         envFrom:
         - configMapRef:
             name: kapture
         resources:
-          requests:
-            memory: "128Mi"
-            cpu: "250m"
           limits:
+            cpu: "200m"
             memory: "256Mi"
-            cpu: "500m"
-# ---
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kapture-api
+  namespace: kapture
+spec:
+  selector:
+    app: kapture-api
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9090
+---
 # #ALLOW EGRESS, DENY ALL INGRESS
 apiVersion: extensions/v1beta1
 kind: NetworkPolicy

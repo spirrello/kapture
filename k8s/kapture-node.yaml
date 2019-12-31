@@ -22,7 +22,7 @@ spec:
       containers:
       - name: kapture-node
         #image: registry-ci.at4d.liacloud.com/devops/kapture-node:0.2.12
-        image: spirrello/kapture-node:0.1.5
+        image: spirrello/kapture-node:0.1.6
         envFrom:
         - configMapRef:
             name: kapture
@@ -32,8 +32,8 @@ spec:
           privileged: true
         resources:
           limits:
-            memory: "256Mi"
             cpu: "200m"
+            memory: "256Mi"
           requests:
             cpu: "100m"
             memory: "128Mi"

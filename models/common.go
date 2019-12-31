@@ -13,12 +13,13 @@ type Deployment struct {
 	Namespace string `json:"namespace"`
 }
 
-//PodInfo to collect pod data
+//PodInfo to collect pod data and configure the capture
 type PodInfo struct {
-	//Deployment string `json:"deployment"`
-	Name string `json:"name"`
-	Node string `json:"node"`
-	IP   string `json:"ip"`
+	Name          string `json:"name"`
+	Node          string `json:"node"`
+	IP            string `json:"ip"`
+	Time          string `json:"time"`
+	TotalCaptures string `json:"totalcaptures"`
 }
 
 //PodCollection to collect pod data
