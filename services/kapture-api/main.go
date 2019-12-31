@@ -128,30 +128,16 @@ func fetchPods(label string, namespace string) map[string][]models.PodInfo {
 }
 
 //nodeInstruct posts to the nodeAPI with instructions.
-//Need to post the TCPDump details along with a start/stop.
 func nodeInstruct(podMap map[string][]models.PodInfo) (string, error) {
-
+	nodeAPIPort := shared.GetEnv("NODE_API_PORT", "9090")
 	for k, v := range podMap {
-		// fmt.Println("k:", k, "v:", v)
-
 		bytesRepresentation, err := json.Marshal(v)
-
-		_, err = http.Post("http://"+k+":9090/v1/nodeapi", "application/json", bytes.NewBuffer(bytesRepresentation))
+		_, err = http.Post("http://"+k+":"+nodeAPIPort+"/v1/nodeapi", "application/json", bytes.NewBuffer(bytesRepresentation))
 		if err != nil {
-			log.Fatalln(err)
+			shared.LogMessage("ERROR", err.Error())
 			return "", err
 		}
 	}
-	// bytesRepresentation, err := json.Marshal(podMap)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-
-	//nodeAPI := os.Getenv("NODE_API")
-	//_, err = http.Post(nodeAPI, "application/json", bytes.NewBuffer(bytesRepresentation))
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
 	return "200 OK", nil
 }
 
@@ -184,7 +170,7 @@ func pods(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	//Fetch the API PORT
-	apiPort := shared.GetEnv("KCAPTURE_API_PORT", "9090")
+	apiPort := shared.GetEnv("KAPTURE_API_PORT", "9090")
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/v1/healthcheck", shared.HealthCheck)

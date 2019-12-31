@@ -24,13 +24,12 @@ spec:
         effect: NoSchedule
       containers:
       - name: kapture-node
-        #image: registry-ci.at4d.liacloud.com/devops/kapture-node:0.2.12
         image: spirrello/kapture-node:0.1.6
         envFrom:
         - configMapRef:
             name: kapture
         ports:
-        - containerPort: 9090
+        - containerPort: 10000
         securityContext:
           privileged: true
         resources:

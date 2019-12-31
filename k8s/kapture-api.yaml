@@ -46,8 +46,7 @@ metadata:
 data:
   CAPTURE_PODS: "app=kapture-node"
   CAPTURE_PODS_NAMESPACE: "kapture"
-  NODE_API: "127.0.0.1:9091"
-  NODE_API_PORT: "9090"
+  NODE_API_PORT: "10000"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -69,7 +68,6 @@ spec:
       serviceAccountName: kapture
       containers:
       - name: kapture
-        #image: registry-ci.at4d.liacloud.com/devops/kapture-api:0.2.12
         image: spirrello/kapture-api:0.1.6
         ports:
         - containerPort: 9090
