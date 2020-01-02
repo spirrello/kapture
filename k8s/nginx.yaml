@@ -1,0 +1,33 @@
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-test
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: nginx-test
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-test
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:stable
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "100Mi"
+          requests:
+            cpu: "0.1"
+            memory: "50Mi"
+        env:
+        - name: CONFIG_SHA
+          value: CONFIG_HOLDER
+      terminationGracePeriodSeconds: 0
