@@ -5,6 +5,7 @@ metadata:
   name: kapture
   labels:
     name: kapture
+    istio-injection: enabled
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -94,30 +95,30 @@ spec:
   - name: http
     protocol: TCP
     port: 9090
----
-# #ALLOW EGRESS, DENY ALL INGRESS
-apiVersion: extensions/v1beta1
-kind: NetworkPolicy
-metadata:
-  annotations:
-  name: default-deny
-  namespace: kapture
-spec:
-  podSelector: {}
-  egress:
-  - {}
-  policyTypes:
-  - Ingress
-  - Egress
----
-apiVersion: extensions/v1beta1
-kind: NetworkPolicy
-metadata:
-  name: kapture-api
-  namespace: kapture
-spec:
-  podSelector:
-    matchLabels:
-      app: kapture-api
-  ingress:
-  - from: []
+# ---
+# # #ALLOW EGRESS, DENY ALL INGRESS
+# apiVersion: extensions/v1beta1
+# kind: NetworkPolicy
+# metadata:
+#   annotations:
+#   name: default-deny
+#   namespace: kapture
+# spec:
+#   podSelector: {}
+#   egress:
+#   - {}
+#   policyTypes:
+#   - Ingress
+#   - Egress
+# ---
+# apiVersion: extensions/v1beta1
+# kind: NetworkPolicy
+# metadata:
+#   name: kapture-api
+#   namespace: kapture
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: kapture-api
+#   ingress:
+#   - from: []

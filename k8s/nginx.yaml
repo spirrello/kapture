@@ -31,3 +31,16 @@ spec:
         - name: CONFIG_SHA
           value: CONFIG_HOLDER
       terminationGracePeriodSeconds: 0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-test
+  namespace: dev
+spec:
+  selector:
+    app: nginx-test
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
