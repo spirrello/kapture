@@ -170,10 +170,10 @@ func pods(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	//Fetch the API PORT
-	apiPort := shared.GetEnv("KAPTURE_API_PORT", "9090")
+	//apiPort := shared.GetEnv("KAPTURE_API_PORT", "9090")
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/v1/healthcheck", shared.HealthCheck)
 	router.HandleFunc("/v1/pods", pods).Methods("POST")
-	log.Fatal(http.ListenAndServe(":"+apiPort, router))
+	log.Fatal(http.ListenAndServe(":9090", router))
 }
